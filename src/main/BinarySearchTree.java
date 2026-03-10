@@ -33,6 +33,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * Creates a binary tree with data.
      * @param data data to insert into the tree
      */
+    @SafeVarargs
     public BinarySearchTree(Type... data)
     {
         this();
@@ -41,6 +42,39 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         {
             insert(datum);
         }
+    }
+
+    /**
+     * Creates a deep copy of a binary tree.
+     * @param treeToCopy binary tree to copy to a new tree
+     */
+    public BinarySearchTree(BinarySearchTree<Type> treeToCopy)
+    {
+        this();
+
+        this.root = copyTree(treeToCopy.root);
+    }
+
+    /**
+     * Helper for copy constructor
+     * @param root the node to copy
+     * @return the copied node
+     */
+    private Node copyTree(Node root)
+    {
+        Node newRoot;
+
+        if (root == null)
+        {
+            return null;
+        }
+
+        // copy the root node
+        newRoot = new Node(root.data);
+        newRoot.left = copyTree(root.left);
+        newRoot.right = copyTree(root.right);
+
+        return newRoot;
     }
 
     /**
@@ -153,6 +187,10 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         return builder;
     }
 
+    /**
+     * Creates a postorder string representing the binary tree
+     * @return String representing the binary tree
+     */
     public String postorderToString()
     {
         StringBuilder builder;
@@ -162,6 +200,12 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         return postorderToString(root, builder).toString().trim();
     }
 
+    /**
+     * Recursive helper for postorder ToString
+     * @param node node of the tree
+     * @param builder string builder object
+     * @return StringBuilder with tree data in order
+     */
     private StringBuilder postorderToString(Node node, StringBuilder builder)
     {
         if (node != null)
@@ -175,6 +219,10 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         return builder;
     }
 
+    /**
+     * Creates a preorder String representing the binary tree
+     * @return String representing the binary tree
+     */
     public String preorderToString()
     {
         StringBuilder builder;
@@ -184,6 +232,12 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         return preorderToString(root, builder).toString().trim();
     }
 
+    /**
+     * Recursive helper for preorder ToString
+     * @param node node of the tree
+     * @param builder string builder object
+     * @return StringBuilder with tree data in order
+     */
     private StringBuilder preorderToString(Node node, StringBuilder builder)
     {
         if (node != null)
@@ -197,6 +251,10 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         return builder;
     }
 
+    /**
+     * toString method - uses inorderToString
+     * @return String representing the binary tree
+     */
     @Override
     public String toString()
     {
