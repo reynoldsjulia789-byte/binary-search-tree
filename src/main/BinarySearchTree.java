@@ -1,5 +1,7 @@
 package main;
 
+import java.util.Objects;
+
 public class BinarySearchTree<Type extends Comparable<Type>>
 {
     private class Node
@@ -49,6 +51,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     {
         root = insert(root, data);
     }
+
     /**
      * Recursive insert -- given a node pointer, recur down and
      * insert the given data into the tree. Returns the new
@@ -76,6 +79,47 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         return(node); // in any case, return the new pointer to the caller
     }
 
+    /**
+     * Look up data in binary tree
+     * @param data the data to look for
+     * @return true if data is contained in the tree, false if not
+     */
+    public boolean lookup(Type data)
+    {
+        return lookup(this.root, data);
+    }
+
+    /**
+     * Recursive helper for lookup method. Given a node, recur down searching for the given data.
+     * @param node node to search
+     * @param data data to search for
+     * @return returns true if data is found, false if not
+     */
+    private boolean lookup(Node node, Type data)
+    {
+        if (node == null)
+        {
+            return false;
+        }
+
+        if (Objects.equals(data, node.data))
+        {
+            return true;
+        }
+        else if (data.compareTo(node.data) < 0)
+        {
+            return lookup(node.left, data);
+        }
+        else
+        {
+            return lookup(node.right, data);
+        }
+    }
+
+    /**
+     * Prints the tree contents in order from smallest to largest
+     * @return String representing the binary tree
+     */
     public String inorderToString()
     {
         StringBuilder builder;
@@ -85,6 +129,12 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         return inorderToString(root, builder).toString().trim();
     }
 
+    /**
+     * Recursive helper for inorder ToString
+     * @param node node of the tree
+     * @param builder string builder object
+     * @return StringBuilder with tree data in order
+     */
     private StringBuilder inorderToString(Node node, StringBuilder builder)
     {
         if (node != null)
