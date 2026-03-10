@@ -46,6 +46,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     /**
      * Inserts the given data into the binary tree.
      * Uses a recursive helper.
+     * @param data the data to insert into the tree
      */
     public void insert(Type data)
     {
@@ -57,6 +58,9 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * insert the given data into the tree. Returns the new
      * node pointer (the standard way to communicate
      * a changed pointer back to the caller).
+     * @param node node to look at
+     * @param data the data to insert
+     * @return node
      */
     private Node insert(Node node, Type data)
     {
@@ -82,37 +86,37 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     /**
      * Look up data in binary tree
      * @param data the data to look for
-     * @return true if data is contained in the tree, false if not
+     * @return returns the level the data is at in the tree if found, -1 if not found
      */
-    public boolean lookup(Type data)
+    public int lookup(Type data)
     {
-        return lookup(this.root, data);
+        return lookup(this.root, data, 1);
     }
 
     /**
      * Recursive helper for lookup method. Given a node, recur down searching for the given data.
      * @param node node to search
      * @param data data to search for
-     * @return returns true if data is found, false if not
+     * @return returns the level the data is at in the tree if found, -1 if not found
      */
-    private boolean lookup(Node node, Type data)
+    private int lookup(Node node, Type data, int level)
     {
         if (node == null)
         {
-            return false;
+            return -1;
         }
 
         if (Objects.equals(data, node.data))
         {
-            return true;
+            return level;
         }
         else if (data.compareTo(node.data) < 0)
         {
-            return lookup(node.left, data);
+            return lookup(node.left, data, level + 1);
         }
         else
         {
-            return lookup(node.right, data);
+            return lookup(node.right, data, level + 1);
         }
     }
 

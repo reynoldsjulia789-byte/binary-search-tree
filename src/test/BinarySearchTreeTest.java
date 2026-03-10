@@ -41,4 +41,15 @@ public class BinarySearchTreeTest
         assertEquals("apple banana orange pear raspberry", test.inorderToString());
     }
 
+    @Test
+    @DisplayName("lookup returns level")
+    public void lookupTest()
+    {
+        BinarySearchTree<Integer> test;
+
+        test = new BinarySearchTree<>(3, 5, 2, 1, 4);
+
+        assertEquals(3, test.lookup(1));
+    }
+
 }
