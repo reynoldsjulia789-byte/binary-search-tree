@@ -103,20 +103,20 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     {
         if (node == null)
         {
-            return -1;
+            return -1; // base case 1: node is null - reached end of tree and did not find
         }
 
         if (Objects.equals(data, node.data))
         {
-            return level;
+            return level; // base case 2: data was found - return level the data was found at
         }
-        else if (data.compareTo(node.data) < 0)
+        else if (data.compareTo(node.data) < 0) // data is less than the data in the node
         {
-            return lookup(node.left, data, level + 1);
+            return lookup(node.left, data, level + 1); // look on the left side of the tree
         }
         else
         {
-            return lookup(node.right, data, level + 1);
+            return lookup(node.right, data, level + 1); // look on the right side of the tree
         }
     }
 
