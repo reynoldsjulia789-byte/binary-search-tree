@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BinarySearchTreeTest
 {
@@ -85,4 +85,21 @@ public class BinarySearchTreeTest
         }
     }
 
+    @Nested
+    @DisplayName("copy tree tests")
+    class copyTreeTest
+    {
+        @Test
+        @DisplayName("copies simple tree")
+        public void copySimple()
+        {
+            BinarySearchTree<Integer> initialTree, copiedTree;
+
+            initialTree = new BinarySearchTree<>(3, 5, 2, 1, 4);
+            copiedTree  = new BinarySearchTree<>(initialTree);
+
+            assertEquals(initialTree.toString(), copiedTree.toString());
+            assertNotSame(initialTree, copiedTree);
+        }
+    }
 }
