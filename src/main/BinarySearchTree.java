@@ -8,13 +8,67 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     {
         Node left;
         Node right;
+        Node parent;
         Type data;
+        int  balanceFactor;
 
         public Node(Type data)
         {
-            this.left  = null;
-            this.right = null;
-            this.data  = data;
+            this.left           = null;
+            this.right          = null;
+            this.parent         = null;
+            this.data           = data;
+            this.balanceFactor  = 0;
+        }
+
+        public void setLeft(Node left)
+        {
+            this.left = left;
+        }
+
+        public void setRight(Node right)
+        {
+            this.right = right;
+        }
+
+        public void setParent(Node parent)
+        {
+            this.parent = parent;
+        }
+
+        public void setData(Type data)
+        {
+            this.data = data;
+        }
+
+        public void setBalanceFactor(int balanceFactor)
+        {
+            this.balanceFactor = balanceFactor;
+        }
+
+        public Node getLeft()
+        {
+            return left;
+        }
+
+        public Node getRight()
+        {
+            return right;
+        }
+
+        public Node getParent()
+        {
+            return parent;
+        }
+
+        public int getBalanceFactor()
+        {
+            return balanceFactor;
+        }
+
+        public Type getData()
+        {
+            return data;
         }
     }
 
