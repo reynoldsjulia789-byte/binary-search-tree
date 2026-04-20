@@ -6,13 +6,13 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 {
     private class Node
     {
-        Node left;
-        Node right;
-        Node parent;
-        Type data;
-        int  balanceFactor;
+        protected Node left;
+        protected Node right;
+        protected Node parent;
+        protected Type data;
+        protected int  balanceFactor;
 
-        public Node(Type data)
+        protected Node(Type data)
         {
             this.left           = null;
             this.right          = null;
@@ -21,52 +21,52 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             this.balanceFactor  = 0;
         }
 
-        public void setLeft(Node left)
+        protected void setLeft(Node left)
         {
             this.left = left;
         }
 
-        public void setRight(Node right)
+        protected void setRight(Node right)
         {
             this.right = right;
         }
 
-        public void setParent(Node parent)
+        protected void setParent(Node parent)
         {
             this.parent = parent;
         }
 
-        public void setData(Type data)
+        protected void setData(Type data)
         {
             this.data = data;
         }
 
-        public void setBalanceFactor(int balanceFactor)
+        protected void setBalanceFactor(int balanceFactor)
         {
             this.balanceFactor = balanceFactor;
         }
 
-        public Node getLeft()
+        protected Node getLeft()
         {
             return left;
         }
 
-        public Node getRight()
+        protected Node getRight()
         {
             return right;
         }
 
-        public Node getParent()
+        protected Node getParent()
         {
             return parent;
         }
 
-        public int getBalanceFactor()
+        protected int getBalanceFactor()
         {
             return balanceFactor;
         }
 
-        public Type getData()
+        protected Type getData()
         {
             return data;
         }
@@ -99,53 +99,29 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     }
 
     /**
-     * Creates a deep copy of a binary tree.
-     * @param treeToCopy binary tree to copy to a new tree
-     */
-    public BinarySearchTree(BinarySearchTree<Type> treeToCopy)
-    {
-        this();
-
-        this.root = copyTree(treeToCopy.root);
-    }
-
-    /**
-     * Helper for copy constructor
-     * @param root the node to copy
-     * @return the copied node
-     */
-    private Node copyTree(Node root)
-    {
-        Node newRoot;
-
-        if (root == null)
-        {
-            return null;
-        }
-
-        // copy the root node
-        newRoot = new Node(root.data);
-        newRoot.left = copyTree(root.left);
-        newRoot.right = copyTree(root.right);
-
-        return newRoot;
-    }
-
-    /**
      * Inserts the given data into the binary tree.
-     * Uses a recursive helper.
+     * Uses a recursive helper. Duplicate data not allowed.
      * @param data the data to insert into the tree
+     * @return true if successful, false if not
      */
-    public void insert(Type data)
+    public boolean insert(Type data)
     {
-        root = insert(root, data);
+        try
+        {
+            this.root = insert(this.root, data);
+
+            return true;
+        }
+        catch (Exception caught)
+        {
+            return false;
+        }
     }
 
     /**
-     * Recursive insert -- given a node pointer, recur down and
+     * Recursive insert: given a node pointer, recur down and
      * insert the given data into the tree. Returns the new
-     * node pointer (the standard way to communicate
-     * a changed pointer back to the caller).
+     * node pointer.
      * @param node node to look at
      * @param data the data to insert
      * @return node
@@ -158,7 +134,11 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
         else
         {
-            if (data.compareTo(node.data) < 0)
+            if (data.compareTo(node.data) == 0)
+            {
+                throw new IllegalArgumentException("duplicate data not allowed in tree");
+            }
+            else if (data.compareTo(node.data) < 0)
             {
                 node.left = insert(node.left, data);
             }
@@ -176,18 +156,18 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param data the data to look for
      * @return returns the level the data is at in the tree if found, -1 if not found
      */
-    public int lookup(Type data)
+    public int find(Type data)
     {
-        return lookup(this.root, data, 1);
+        return find(this.root, data, 1);
     }
 
     /**
-     * Recursive helper for lookup method. Given a node, recur down searching for the given data.
+     * Recursive helper for find method. Given a node, recur down searching for the given data.
      * @param node node to search
      * @param data data to search for
      * @return returns the level the data is at in the tree if found, -1 if not found
      */
-    private int lookup(Node node, Type data, int level)
+    private int find(Node node, Type data, int level)
     {
         if (node == null)
         {
@@ -200,11 +180,11 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
         else if (data.compareTo(node.data) < 0) // data is less than the data in the node
         {
-            return lookup(node.left, data, level + 1); // look on the left side of the tree
+            return find(node.left, data, level + 1); // look on the left side of the tree
         }
         else
         {
-            return lookup(node.right, data, level + 1); // look on the right side of the tree
+            return find(node.right, data, level + 1); // look on the right side of the tree
         }
     }
 

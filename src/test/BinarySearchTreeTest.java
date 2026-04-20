@@ -48,40 +48,40 @@ public class BinarySearchTreeTest
     }
 
     @Nested
-    @DisplayName("lookup tests")
+    @DisplayName("find tests")
     class lookupTests
     {
         @Test
-        @DisplayName("lookup returns level")
+        @DisplayName("find returns level")
         public void lookupTest()
         {
             BinarySearchTree<Integer> test;
 
             test = new BinarySearchTree<>(3, 5, 2, 1, 4);
 
-            assertEquals(3, test.lookup(1));
+            assertEquals(3, test.find(1));
         }
 
         @Test
-        @DisplayName("lookup returns -1 if no data found")
+        @DisplayName("find returns -1 if no data found")
         public void lookupNotFound()
         {
             BinarySearchTree<Integer> test;
 
             test = new BinarySearchTree<>(3, 5, 2, 1, 4);
 
-            assertEquals(-1, test.lookup(0));
+            assertEquals(-1, test.find(0));
         }
 
         @Test
-        @DisplayName("lookup finds data in node at the top of the tree")
+        @DisplayName("find finds data in node at the top of the tree")
         public void lookupTopOfTree()
         {
             BinarySearchTree<Integer> test;
 
             test = new BinarySearchTree<>(3, 5, 2, 1, 4);
 
-            assertEquals(1, test.lookup(3));
+            assertEquals(1, test.find(3));
         }
     }
 
