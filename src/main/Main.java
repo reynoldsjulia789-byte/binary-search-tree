@@ -12,8 +12,8 @@ public class Main
 
         intTree = new BinarySearchTree<>(5, 3, 9, 1, 4, 6, 2);
 
-        System.out.println("preorder:\t" + intTree.preorderToString());
-        System.out.println("inorder:\t" + intTree.inorderToString());
-        System.out.println("postorder:\t" + intTree.postorderToString());
+        System.out.println("preorder:\t" + intTree.preorder());
+        System.out.println("inOrder:\t" + intTree.inOrder());
+        System.out.println("postorder:\t" + intTree.postorder());
     }
 }

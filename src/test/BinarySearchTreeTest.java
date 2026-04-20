@@ -10,14 +10,25 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BinarySearchTreeTest
 {
     @Test
-    @DisplayName("adds all items")
-    public void addItems()
+    @DisplayName("adds items on right side of tree")
+    public void addItemsRight()
     {
         BinarySearchTree<Integer> test;
 
-        test = new BinarySearchTree<>(1, 2, 3);
+        test = new BinarySearchTree<>(1, 2, 3, 4, 5);
 
-        assertEquals("1 2 3", test.inorderToString());
+        assertEquals("1, 2, 3, 4, 5", test.inOrder());
+    }
+
+    @Test
+    @DisplayName("adds items on left side of tree")
+    public void addItemsLeft()
+    {
+        BinarySearchTree<Integer> test;
+
+        test = new BinarySearchTree<>(5, 4, 3, 2, 1);
+
+        assertEquals("1, 2, 3, 4, 5", test.inOrder());
     }
 
     @Nested
@@ -32,7 +43,7 @@ public class BinarySearchTreeTest
 
             test = new BinarySearchTree<>(3, 5, 2, 1, 4);
 
-            assertEquals("1 2 3 4 5", test.inorderToString());
+            assertEquals("1, 2, 3, 4, 5", test.inOrder());
         }
 
         @Test
@@ -43,63 +54,7 @@ public class BinarySearchTreeTest
 
             test = new BinarySearchTree<>("orange", "apple", "pear", "banana", "raspberry");
 
-            assertEquals("apple banana orange pear raspberry", test.inorderToString());
-        }
-    }
-
-    @Nested
-    @DisplayName("find tests")
-    class lookupTests
-    {
-        @Test
-        @DisplayName("find returns level")
-        public void lookupTest()
-        {
-            BinarySearchTree<Integer> test;
-
-            test = new BinarySearchTree<>(3, 5, 2, 1, 4);
-
-            assertEquals(3, test.find(1));
-        }
-
-        @Test
-        @DisplayName("find returns -1 if no data found")
-        public void lookupNotFound()
-        {
-            BinarySearchTree<Integer> test;
-
-            test = new BinarySearchTree<>(3, 5, 2, 1, 4);
-
-            assertEquals(-1, test.find(0));
-        }
-
-        @Test
-        @DisplayName("find finds data in node at the top of the tree")
-        public void lookupTopOfTree()
-        {
-            BinarySearchTree<Integer> test;
-
-            test = new BinarySearchTree<>(3, 5, 2, 1, 4);
-
-            assertEquals(1, test.find(3));
-        }
-    }
-
-    @Nested
-    @DisplayName("copy tree tests")
-    class copyTreeTest
-    {
-        @Test
-        @DisplayName("copies simple tree")
-        public void copySimple()
-        {
-            BinarySearchTree<Integer> initialTree, copiedTree;
-
-            initialTree = new BinarySearchTree<>(3, 5, 2, 1, 4);
-            copiedTree  = new BinarySearchTree<>(initialTree);
-
-            assertEquals(initialTree.toString(), copiedTree.toString());
-            assertNotSame(initialTree, copiedTree);
+            assertEquals("apple, banana, orange, pear, raspberry", test.inOrder());
         }
     }
 }

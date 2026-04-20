@@ -6,29 +6,35 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 {
     private class Node
     {
-        protected Node left;
-        protected Node right;
+        protected Node leftChild;
+        protected Node rightChild;
         protected Node parent;
         protected Type data;
         protected int  balanceFactor;
 
         protected Node(Type data)
         {
-            this.left           = null;
-            this.right          = null;
+            this.leftChild      = null;
+            this.rightChild     = null;
             this.parent         = null;
             this.data           = data;
             this.balanceFactor  = 0;
         }
 
-        protected void setLeft(Node left)
+        protected Node(Type data, Node parent)
         {
-            this.left = left;
+            this(data);
+            this.parent = parent;
         }
 
-        protected void setRight(Node right)
+        protected void setLeftChild(Node leftChild)
         {
-            this.right = right;
+            this.leftChild = leftChild;
+        }
+
+        protected void setRightChild(Node rightChild)
+        {
+            this.rightChild = rightChild;
         }
 
         protected void setParent(Node parent)
@@ -46,14 +52,14 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             this.balanceFactor = balanceFactor;
         }
 
-        protected Node getLeft()
+        protected Node getLeftChild()
         {
-            return left;
+            return leftChild;
         }
 
-        protected Node getRight()
+        protected Node getRightChild()
         {
-            return right;
+            return rightChild;
         }
 
         protected Node getParent()
@@ -66,11 +72,17 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             return balanceFactor;
         }
 
-        protected Type getData()
+        public Type getData()
         {
             return data;
         }
-    }
+
+        @Override
+        public String toString()
+        {
+            return this.data.toString();
+        }
+    }// end of private Node class
 
     // Root node pointer. Will be null for an empty tree.
     private Node root;
@@ -80,7 +92,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      */
     public BinarySearchTree()
     {
-        root = null;
+        this.root = null;
     }
 
     /**
@@ -106,10 +118,15 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      */
     public boolean insert(Type data)
     {
+        if (this.root == null)
+        {
+            this.root = new Node(data);
+            return true;
+        }
+
         try
         {
-            this.root = insert(this.root, data);
-
+            insert(this.root, data);
             return true;
         }
         catch (Exception caught)
@@ -118,45 +135,54 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
     }
 
-    /**
+    /** TODO: balance tree after each insert
      * Recursive insert: given a node pointer, recur down and
      * insert the given data into the tree. Returns the new
      * node pointer.
      * @param node node to look at
      * @param data the data to insert
-     * @return node
+     * @return returns the new node if inserted, throws an exception if not
      */
     private Node insert(Node node, Type data)
     {
-        if (node == null)
+        if (data.compareTo(node.data) == 0)
         {
-            node = new Node(data);
+            throw new IllegalArgumentException("duplicate data not allowed in tree");
         }
-        else
+        else if (data.compareTo(node.data) < 0)
         {
-            if (data.compareTo(node.data) == 0)
+            if (node.leftChild == null)
             {
-                throw new IllegalArgumentException("duplicate data not allowed in tree");
-            }
-            else if (data.compareTo(node.data) < 0)
-            {
-                node.left = insert(node.left, data);
+                node.leftChild = new Node (data, node);
+                return node.leftChild;
             }
             else
             {
-                node.right = insert(node.right, data);
+                insert(node.leftChild, data);
+            }
+        }
+        else
+        {
+            if (node.rightChild == null)
+            {
+                node.rightChild = new Node (data, node);
+                return node.rightChild;
+            }
+            else
+            {
+                insert(node.rightChild, data);
             }
         }
 
-        return(node); // in any case, return the new pointer to the caller
-    }
+        return node;
+    } // end of insert method
 
     /**
      * Look up data in binary tree
      * @param data the data to look for
-     * @return returns the level the data is at in the tree if found, -1 if not found
+     * @return returns the node with the matching data, null if not found
      */
-    public int find(Type data)
+    private Node find(Type data)
     {
         return find(this.root, data, 1);
     }
@@ -165,57 +191,163 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * Recursive helper for find method. Given a node, recur down searching for the given data.
      * @param node node to search
      * @param data data to search for
-     * @return returns the level the data is at in the tree if found, -1 if not found
+     * @return returns the node with the matching data, null if not found
      */
-    private int find(Node node, Type data, int level)
+    private Node find(Node node, Type data, int level)
     {
         if (node == null)
         {
-            return -1; // base case 1: node is null - reached end of tree and did not find
+            return null; // base case 1: node is null - reached end of tree and did not find
         }
 
         if (Objects.equals(data, node.data))
         {
-            return level; // base case 2: data was found - return level the data was found at
+            return node; // base case 2: data was found - return node
         }
         else if (data.compareTo(node.data) < 0) // data is less than the data in the node
         {
-            return find(node.left, data, level + 1); // look on the left side of the tree
+            return find(node.leftChild, data, level + 1); // look on the leftChild side of the tree
+        }
+        else // data is greater than the data in the node
+        {
+            return find(node.rightChild, data, level + 1); // look on the rightChild side of the tree
+        }
+    }
+
+    /** TODO: deal with node that has 2 children
+     * TODO: balance tree after each remove
+     * Removes the data from the tree, if found
+     * @param data data to remove
+     * @return returns the removed node if found, null if not
+     */
+    public Node remove (Type data)
+    {
+        Node toRemove;
+        enum Side {LEFT, RIGHT, ROOT}
+        Side parentSide;
+
+        toRemove = find(data);
+
+        if (toRemove == null)
+        {
+            return null;
+        }
+
+        // determine if the node to be removed is on the parent's left or right side
+        if (toRemove.parent == null)
+        {
+            parentSide = Side.ROOT;
+        }
+        else if (toRemove.parent.leftChild == toRemove)
+        {
+            parentSide = Side.LEFT;
         }
         else
         {
-            return find(node.right, data, level + 1); // look on the right side of the tree
+            parentSide = Side.RIGHT;
         }
+
+        // remove the node
+        if (toRemove.leftChild == null && toRemove.rightChild == null) // toRemove has no children
+        {
+            if (parentSide == Side.LEFT)
+            {
+                toRemove.parent.leftChild = null;
+            }
+            else if (parentSide == Side.RIGHT)
+            {
+                toRemove.parent.rightChild = null;
+            }
+            else // removing root w/ no children
+            {
+                this.root = null;
+            }
+        }
+        else if (toRemove.leftChild != null && toRemove.rightChild == null) // toRemove has a left child
+        {
+            if (parentSide == Side.LEFT)
+            {
+                toRemove.parent.leftChild = toRemove.leftChild;
+            }
+            else if (parentSide == Side.RIGHT)
+            {
+                toRemove.parent.rightChild = toRemove.leftChild;
+            }
+            else // remove root w/ left child
+            {
+                this.root = toRemove.leftChild;
+            }
+        }
+        else if (toRemove.leftChild == null) // toRemove has a right child
+        {
+            if (parentSide == Side.LEFT)
+            {
+                toRemove.parent.leftChild = toRemove.rightChild;
+            }
+            else if (parentSide == Side.ROOT)
+            {
+                toRemove.parent.rightChild = toRemove.rightChild;
+            }
+            else // remove root w/ right child
+            {
+                this.root = toRemove.rightChild;
+            }
+        }
+        else // toRemove has 2 children
+        {
+            // find next closest value node w/ no children, swap value, then delete that node
+
+        }
+
+        return toRemove;
+    } // end of Remove method
+
+    /**
+     * TODO: finish this method that returns the height of this tree
+     * @return
+     */
+    public int height()
+    {
+        return -1;
+    }
+
+    /**
+     * TODO: finish this method that returns the depth of this node
+     * @return
+     */
+    public int depth(Node query)
+    {
+        return -1;
     }
 
     /**
      * Prints the tree contents in order from smallest to largest
      * @return String representing the binary tree
      */
-    public String inorderToString()
+    public String inOrder()
     {
         StringBuilder builder;
 
         builder = new StringBuilder();
 
-        return inorderToString(root, builder).toString().trim();
+        return inOrder(root, builder).delete(builder.length() - 2, builder.length()).toString().trim();
     }
 
     /**
-     * Recursive helper for inorder ToString
+     * Recursive helper for inOrder ToString
      * @param node node of the tree
      * @param builder string builder object
      * @return StringBuilder with tree data in order
      */
-    private StringBuilder inorderToString(Node node, StringBuilder builder)
+    private StringBuilder inOrder(Node node, StringBuilder builder)
     {
         if (node != null)
         {
-            inorderToString(node.left, builder);
+            inOrder(node.leftChild, builder);
 
-            builder.append(node.data).append(" ");
+            builder.append(node.data).append(", ");
 
-            inorderToString(node.right, builder);
+            inOrder(node.rightChild, builder);
         }
 
         return builder;
@@ -225,13 +357,13 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * Creates a postorder string representing the binary tree
      * @return String representing the binary tree
      */
-    public String postorderToString()
+    public String postorder()
     {
         StringBuilder builder;
 
         builder = new StringBuilder();
 
-        return postorderToString(root, builder).toString().trim();
+        return postorder(root, builder).delete(builder.length() - 2, builder.length()).toString().trim();
     }
 
     /**
@@ -240,14 +372,14 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param builder string builder object
      * @return StringBuilder with tree data in order
      */
-    private StringBuilder postorderToString(Node node, StringBuilder builder)
+    private StringBuilder postorder(Node node, StringBuilder builder)
     {
         if (node != null)
         {
-            postorderToString(node.left, builder);
-            postorderToString(node.right, builder);
+            postorder(node.leftChild, builder);
+            postorder(node.rightChild, builder);
 
-            builder.append(node.data).append(" ");
+            builder.append(node.data).append(", ");
         }
 
         return builder;
@@ -257,13 +389,13 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * Creates a preorder String representing the binary tree
      * @return String representing the binary tree
      */
-    public String preorderToString()
+    public String preorder()
     {
         StringBuilder builder;
 
         builder = new StringBuilder();
 
-        return preorderToString(root, builder).toString().trim();
+        return preorder(root, builder).delete(builder.length() - 2, builder.length()).toString().trim();
     }
 
     /**
@@ -272,26 +404,50 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param builder string builder object
      * @return StringBuilder with tree data in order
      */
-    private StringBuilder preorderToString(Node node, StringBuilder builder)
+    private StringBuilder preorder(Node node, StringBuilder builder)
     {
         if (node != null)
         {
-            builder.append(node.data).append(" ");
+            builder.append(node.data).append(", ");
 
-            preorderToString(node.left, builder);
-            preorderToString(node.right, builder);
+            preorder(node.leftChild, builder);
+            preorder(node.rightChild, builder);
         }
 
         return builder;
     }
 
     /**
-     * toString method - uses inorderToString
+     * Creates a String representing the binary tree by level
+     * @return String representing the binary tree
+     */
+    public String levelOrder()
+    {
+        StringBuilder builder;
+
+        builder = new StringBuilder();
+
+        return levelOrder(this.root, builder).delete(builder.length() - 2, builder.length()).toString().trim();
+    }
+
+    /** TODO: Finish level order toString method
+     * Recursive helper for levelOrder to String
+     * @param node node of the tree to start at
+     * @param builder string builder object
+     * @return StringBuilder with tree data ordered by level
+     */
+    private StringBuilder levelOrder(Node node, StringBuilder builder)
+    {
+        return null;
+    }
+
+    /**
+     * toString method - uses inOrder
      * @return String representing the binary tree
      */
     @Override
     public String toString()
     {
-        return inorderToString();
+        return inOrder();
     }
 }
