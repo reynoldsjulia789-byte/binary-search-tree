@@ -6,13 +6,13 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 {
     private class Node
     {
-        protected Node leftChild;
-        protected Node rightChild;
-        protected Node parent;
-        protected Type data;
-        protected int  balanceFactor;
+        Node leftChild;
+        Node rightChild;
+        Node parent;
+        Type data;
+        int  balanceFactor;
 
-        protected Node(Type data)
+        Node(Type data)
         {
             this.leftChild      = null;
             this.rightChild     = null;
@@ -21,60 +21,10 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             this.balanceFactor  = 0;
         }
 
-        protected Node(Type data, Node parent)
+        Node(Type data, Node parent)
         {
             this(data);
             this.parent = parent;
-        }
-
-        protected void setLeftChild(Node leftChild)
-        {
-            this.leftChild = leftChild;
-        }
-
-        protected void setRightChild(Node rightChild)
-        {
-            this.rightChild = rightChild;
-        }
-
-        protected void setParent(Node parent)
-        {
-            this.parent = parent;
-        }
-
-        protected void setData(Type data)
-        {
-            this.data = data;
-        }
-
-        protected void setBalanceFactor(int balanceFactor)
-        {
-            this.balanceFactor = balanceFactor;
-        }
-
-        protected Node getLeftChild()
-        {
-            return leftChild;
-        }
-
-        protected Node getRightChild()
-        {
-            return rightChild;
-        }
-
-        protected Node getParent()
-        {
-            return parent;
-        }
-
-        protected int getBalanceFactor()
-        {
-            return balanceFactor;
-        }
-
-        public Type getData()
-        {
-            return data;
         }
 
         @Override
@@ -303,19 +253,87 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     } // end of Remove method
 
     /**
-     * TODO: finish this method that returns the height of this tree
-     * @return
+     * TODO: finish balance method
      */
-    public int height()
+    private void balance()
     {
-        return -1;
+
     }
 
     /**
-     * TODO: finish this method that returns the depth of this node
-     * @return
+     * TODO: finish leftRotate method
      */
-    public int depth(Node query)
+    private void leftRotate()
+    {
+
+    }
+
+    /**
+     * TODO: finish rightRotate method
+     */
+    private void rightRotate()
+    {
+
+    }
+
+    /**
+     * TODO: finish leftRightRotate method
+     */
+    private void leftRightRotate()
+    {
+
+    }
+
+    /**
+     * TODO: finish rightLeftRotate method
+     */
+    private void rightLeftRotate()
+    {
+
+    }
+
+    /**
+     * @param query the node to find the depth of
+     * @return returns the depth of the node from the root of the tree
+     */
+    private int depth(Node query)
+    {
+        return depth(query, 0);
+    }
+
+    /**
+     * Recursive helper for depth method that takes a node to determine the depth of
+     * and the current depth and returns the depth of the node.
+     * @param query the node to determine the depth of
+     * @param depth the current calculated depth
+     * @return returns the depth of the node
+     */
+    private int depth(Node query, int depth)
+    {
+        if (query.parent == null)
+        {
+            return depth;
+        }
+
+        return depth(query.parent, depth + 1);
+    }
+
+    /**
+     * Finds the height of the binary search tree
+     * @return returns the height of the tree
+     */
+    public int height()
+    {
+        return height(this.root, 0);
+    }
+
+    /** TODO: finish this method that returns the height of this tree
+     * Recursive helper that finds the height of the tree from a starting node
+     * @param node node to start at
+     * @param height current calculated height
+     * @return returns the height of the tree
+     */
+    private int height(Node node, int height)
     {
         return -1;
     }
