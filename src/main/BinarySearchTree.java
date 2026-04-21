@@ -327,7 +327,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         return height(this.root, 0);
     }
 
-    /** TODO: finish this method that returns the height of this tree
+    /**
      * Recursive helper that finds the height of the tree from a starting node
      * @param node node to start at
      * @param height current calculated height
@@ -335,7 +335,17 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      */
     private int height(Node node, int height)
     {
-        return -1;
+        int leftHeight, rightHeight;
+
+        if (node == null)
+        {
+            return height;
+        }
+
+        leftHeight  = height(node.leftChild, height + 1);
+        rightHeight = height(node.rightChild, height + 1);
+
+        return Math.max(leftHeight, rightHeight);
     }
 
     /**
