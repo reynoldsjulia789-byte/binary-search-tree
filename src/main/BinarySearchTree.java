@@ -1,6 +1,8 @@
 package main;
 
 import java.util.Objects;
+import java.util.Queue;
+import java.util.LinkedList;
 
 public class BinarySearchTree<Type extends Comparable<Type>>
 {
@@ -277,22 +279,6 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     }
 
     /**
-     * TODO: finish leftRightRotate method
-     */
-    private void leftRightRotate()
-    {
-
-    }
-
-    /**
-     * TODO: finish rightLeftRotate method
-     */
-    private void rightLeftRotate()
-    {
-
-    }
-
-    /**
      * @param query the node to find the depth of
      * @return returns the depth of the node from the root of the tree
      */
@@ -446,27 +432,38 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     }
 
     /**
-     * Creates a String representing the binary tree by level
+     * Creates a String representing the binary tree with elements ordered
+     * by level and from left to right
      * @return String representing the binary tree
      */
     public String levelOrder()
     {
         StringBuilder builder;
+        Queue<Node>   q;
+        Node          curr;
 
+        q       = new LinkedList<>();
         builder = new StringBuilder();
 
-        return levelOrder(this.root, builder).delete(builder.length() - 2, builder.length()).toString().trim();
-    }
+        q.add(this.root);
 
-    /** TODO: Finish level order toString method
-     * Recursive helper for levelOrder to String
-     * @param node node of the tree to start at
-     * @param builder string builder object
-     * @return StringBuilder with tree data ordered by level
-     */
-    private StringBuilder levelOrder(Node node, StringBuilder builder)
-    {
-        return null;
+        while (!q.isEmpty())
+        {
+            curr = q.remove();
+
+            if (curr.leftChild != null)
+            {
+                q.add(curr.leftChild);
+            }
+            if (curr.rightChild != null)
+            {
+                q.add(curr.rightChild);
+            }
+
+            builder.append(curr.data).append(", ");
+        }
+
+        return builder.delete(builder.length() - 2, builder.length()).toString().trim();
     }
 
     /**
