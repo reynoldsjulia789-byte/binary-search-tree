@@ -93,4 +93,20 @@ public class BinarySearchTreeTest
             assertEquals(1, test.height());
         }
     }
+
+    @Nested
+    @DisplayName("tree traversal tests")
+    class treeTraversal
+    {
+        @Test
+        @DisplayName("returns items by level ordered from left to right after")
+        public void levelOrder()
+        {
+            BinarySearchTree<Integer> test;
+
+            test = new BinarySearchTree<>(5, 3, 7, 1, 4, 6, 8);
+
+            assertEquals("5, 3, 7, 1, 4, 6, 8", test.levelOrder());
+        }
+    }
 }
