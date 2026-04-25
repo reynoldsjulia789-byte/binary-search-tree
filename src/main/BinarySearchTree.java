@@ -33,13 +33,32 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     } // end of Varargs constructor
 
     /**
+     * Finds the height of the binary search tree
+     * @return returns the height of the tree
+     */
+    public int height()
+    {
+        if (this.root == null)
+        {
+            return 0;
+        }
+
+        return this.root.height;
+    } // end of height (entire tree)
+
+    /**
      * Inserts the given data into the binary tree.
-     * Uses a recursive helper. Duplicate data not allowed.
+     * Duplicate data not allowed. Null data not allowed.
      * @param data the data to insert into the tree
      * @return true if successful, false if not
      */
     public boolean insert(Type data)
     {
+        if (data == null)
+        {
+            return false;
+        }
+
         try
         {
             this.root = insert(this.root, data, null);
@@ -59,8 +78,9 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param data the data to insert
      * @param parent the parent of the node to look at
      * @return returns the new node if inserted, throws an exception if not
+     * @throws IllegalArgumentException if passed duplicate data
      */
-    private Node insert(Node node, Type data, Node parent)
+    private Node insert(Node node, Type data, Node parent) throws IllegalArgumentException
     {
         int compared;
 
@@ -88,12 +108,43 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     } // end of insert helper
 
     /**
+     * Returns the location (depth of the Node with the matching data)
+     * in the tree if found, -1 if not
+     * @param data the data to search for
+     * @return returns the location of the data in the tree or -1 if not found
+     * @throws IllegalArgumentException if the data to look up is null
+     */
+    public int lookUp(Type data) throws IllegalArgumentException
+    {
+        Node match;
+
+        if (data == null)
+        {
+            throw new IllegalArgumentException("can't look up null data. null data not allowed in tree");
+        }
+
+        match = find(data);
+
+        if (match == null)
+        {
+            return -1;
+        }
+        return match.depth();
+    }
+
+    /**
      * Searches for the Node that holds the specified data.
      * @param data the data to search for
      * @return returns the Node with the matching data, or null if not found.
+     * @throws IllegalArgumentException if the data to find is null
      */
-    private Node find(Type data)
+    private Node find(Type data) throws IllegalArgumentException
     {
+        if (data == null)
+        {
+            throw new IllegalArgumentException("can't look up null data. null data not allowed in tree");
+        }
+
         return find(this.root, data);
     } // end of find
 
@@ -259,20 +310,6 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         rebalanceTree(parent);
     } // end of rebalanceTree
-
-    /**
-     * Finds the height of the binary search tree
-     * @return returns the height of the tree
-     */
-    public int height()
-    {
-        if (this.root == null)
-        {
-            return 0;
-        }
-
-        return this.root.height;
-    } // end of height (entire tree)
 
     /**
      * Prints the tree contents in order from smallest to largest
