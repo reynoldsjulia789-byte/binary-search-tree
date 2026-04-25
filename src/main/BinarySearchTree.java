@@ -14,6 +14,10 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         Type data;
         int  balanceFactor;
 
+        /**
+         * Constructor for Binary Search Tree Node
+         * @param data the data to be stored in the Node
+         */
         Node(Type data)
         {
             this.leftChild      = null;
@@ -23,12 +27,22 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             this.balanceFactor  = 0;
         }
 
+        /**
+         * Constructor for Binary Search Tree Node that also
+         * specifies the node's parent
+         * @param data the data to be stored in the Node
+         * @param parent the parent Node of the Node being created
+         */
         Node(Type data, Node parent)
         {
             this(data);
             this.parent = parent;
         }
 
+        /**
+         * A String representation of the node
+         * @return returns the Node's data as a String
+         */
         @Override
         public String toString()
         {
@@ -78,7 +92,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         try
         {
-            insert(this.root, data);
+            insert(this.root, data, null);
             return true;
         }
         catch (Exception caught)
@@ -87,47 +101,46 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
     }
 
-    /** TODO: balance tree after each insert
+    /**
      * Recursive insert: given a node pointer, recur down and
      * insert the given data into the tree. Returns the new
      * node pointer.
      * @param node node to look at
      * @param data the data to insert
+     * @param parent the parent of the node to look at
      * @return returns the new node if inserted, throws an exception if not
      */
-    private Node insert(Node node, Type data)
+    private Node insert(Node node, Type data, Node parent)
     {
-        if (data.compareTo(node.data) == 0)
+        int compared;
+
+        if (node == null)
         {
-            throw new IllegalArgumentException("duplicate data not allowed in tree");
+            return new Node(data, parent);
         }
-        else if (data.compareTo(node.data) < 0)
+
+        compared = data.compareTo(node.data);
+
+        if (compared > 0)
         {
-            if (node.leftChild == null)
-            {
-                node.leftChild = new Node (data, node);
-                return node.leftChild;
-            }
-            else
-            {
-                insert(node.leftChild, data);
-            }
+            node.rightChild = insert(node.rightChild, data, node);
+        }
+        else if (compared < 0)
+        {
+            node.leftChild = insert(node.leftChild, data, node);
         }
         else
         {
-            if (node.rightChild == null)
-            {
-                node.rightChild = new Node (data, node);
-                return node.rightChild;
-            }
-            else
-            {
-                insert(node.rightChild, data);
-            }
+            throw new IllegalArgumentException("duplicate data not allowed in tree");
         }
 
-        return node;
+        return balance(node);
     } // end of insert method
+
+    private void updateBalanceFactor(Node node)
+    {
+        node.balanceFactor = height(node.rightChild) - height(node.leftChild);
+    }
 
     /**
      * Look up data in binary tree
@@ -255,15 +268,45 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     } // end of Remove method
 
     /**
-     * TODO: finish balance method
+     * Balances the passed Node by determining the necessary rotations &
+     * calling the appropriate rotation methods
+     * @param node the Node to balance
+     * @return returns the balanced Node
      */
-    private void balance()
+    private Node balance(Node node)
     {
+        updateBalanceFactor(node);
 
+        // node is left-heavy
+        if (node.balanceFactor < -1)
+        {
+            // check if left child is right-heavy
+            // if so, left-right rotate
+            if (node.leftChild.balanceFactor > 0)
+            {
+                node.leftChild = leftRotate(node.leftChild);
+            }
+
+            return rightRotate(node);
+        }
+
+        // node is right-heavy
+        if (node.balanceFactor > 1)
+        {
+            // check if right child is left-heavy
+            // if so, right-left rotate
+            if(node.rightChild.balanceFactor < 0)
+            {
+                node.rightChild = rightRotate(node.rightChild);
+            }
+
+            return leftRotate(node);
+        }
+
+        return node;
     }
 
     /**
-     * TODO: don't forget in calling method to attach return to proper spot & update parent
      * Performs a left rotation on the specified node
      * @param node the Node to rotate at
      * @return returns the new root of the subtree, be sure to attach
@@ -272,25 +315,29 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      */
     private Node leftRotate(Node node)
     {
-        Node newParent, orphan;
+        Node newRoot, orphan, parentOfNewRoot;
 
-        newParent            = node     .rightChild;
-        orphan               = newParent.leftChild;
+        newRoot            = node   .rightChild;
+        orphan             = newRoot.leftChild;
+        parentOfNewRoot    = node   .parent;
 
         // rotate
-        newParent.leftChild  = node;
-        node     .parent     = newParent;
-        newParent.parent     = null;
+        newRoot.leftChild  = node;
+        node   .parent     = newRoot;
+        newRoot.parent     = parentOfNewRoot;
 
         // re-attach orphan
-        node     .rightChild = orphan;
-        orphan   .parent     = node;
+        node   .rightChild = orphan;
+        orphan .parent     = node;
 
-        return newParent;
+        // update balance factors
+        updateBalanceFactor(node);
+        updateBalanceFactor(newRoot);
+
+        return newRoot;
     }
 
     /**
-     * TODO: don't forget in calling method to attach return to proper spot & update parent
      * Performs a right rotation on the specified node
      * @param node the Node to rotate at
      * @return returns the new root of the subtree, be sure to attach
@@ -299,21 +346,26 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      */
     private Node rightRotate(Node node)
     {
-        Node newParent, orphan;
+        Node newRoot, orphan, parentOfNewRoot;
 
-        newParent            = node     .leftChild;
-        orphan               = newParent.rightChild;
+        newRoot            = node   .leftChild;
+        orphan             = newRoot.rightChild;
+        parentOfNewRoot    = node   .parent;
 
         // rotate
-        newParent.rightChild = node;
-        node     .parent     = newParent;
-        newParent.parent     = null;
+        newRoot.rightChild = node;
+        node   .parent     = newRoot;
+        newRoot.parent     = parentOfNewRoot;
 
         // re-attach orphan
-        node     .leftChild  = orphan;
-        orphan   .parent     = node;
+        node   .leftChild  = orphan;
+        orphan .parent     = node;
 
-        return newParent;
+        // update balance factors
+        updateBalanceFactor(node);
+        updateBalanceFactor(newRoot);
+
+        return newRoot;
     }
 
     /**
@@ -349,6 +401,15 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     public int height()
     {
         return height(this.root, 0);
+    }
+
+    /**
+     * Finds the height of the binary search tree from a specified node
+     * @return returns the height of the tree
+     */
+    private int height(Node node)
+    {
+        return height(node, 0);
     }
 
     /**
