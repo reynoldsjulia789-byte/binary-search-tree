@@ -1,6 +1,5 @@
 package main;
 
-import java.util.Objects;
 import java.util.Queue;
 import java.util.LinkedList;
 
@@ -46,7 +45,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             this.root = insert(this.root, data, null);
             return true;
         }
-        catch (Exception caught)
+        catch (IllegalArgumentException caught)
         {
             return false;
         }
@@ -158,6 +157,11 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             else
             {
                 parent.rightChild = child;
+            }
+
+            if (child != null)
+            {
+                child.parent = parent;
             }
 
             return parent;
@@ -506,7 +510,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             {
                 // check if left child is right-heavy
                 // if so, left-right rotate
-                if (this.leftChild.balanceFactor > 0)
+                if (this.leftChild != null && this.leftChild.balanceFactor > 0)
                 {
                     this.leftChild = this.leftChild.leftRotate();
                 }
@@ -519,7 +523,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             {
                 // check if right child is left-heavy
                 // if so, right-left rotate
-                if (this.rightChild.balanceFactor < 0)
+                if (this.rightChild != null && this.rightChild.balanceFactor < 0)
                 {
                     this.rightChild = this.rightChild.rightRotate();
                 }
@@ -532,9 +536,8 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         /**
          * Performs a left rotation on this Node
-         * @return returns the new root of the subtree, be sure to attach
-         * returned node to the correct spot and update the returned node's
-         * parent
+         * @return returns the new root of the subtree, caller must attach
+         * returned node to the correct spot
          */
         private Node leftRotate()
         {
@@ -566,9 +569,8 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         /**
          * Performs a right rotation on this Node
-         * @return returns the new root of the subtree, be sure to attach
-         * returned node to the correct spot and update the returned node's
-         * parent
+         * @return returns the new root of the subtree, caller must attach
+         * returned node to the correct spot
          */
         private Node rightRotate()
         {
@@ -605,7 +607,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
          */
         private Node find(Type data)
         {
-            if (Objects.equals(data, this.data))
+            if (data.compareTo(this.data) == 0)
             {
                 return this;
             }
