@@ -72,12 +72,32 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         /**
          * A String representation of the node
-         * @return returns the Node's data as a String
+         * @return returns the Node's data, the balance factor, the height,
+         * the depth, and the number of children of the node
          */
         @Override
         public String toString()
         {
-            return this.data.toString();
+            int totalChildren;
+
+            if (this.leftChild == null && this.rightChild == null)
+            {
+                totalChildren = 0;
+            }
+            else if (this.leftChild != null && this.rightChild != null)
+            {
+                totalChildren = 2;
+            }
+            else
+            {
+                totalChildren = 1;
+            }
+
+            return "data: " + this.data.toString() +
+                    ",  balance: " + this.balanceFactor +
+                    ",  height: " + this.height +
+                    ",  depth: " + depth(this) +
+                    ",  children: " + totalChildren;
         } // end of Node toString
     } // end of private Node class
 
@@ -644,12 +664,13 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     } // end of levelOrder
 
     /**
-     * toString method - uses inOrder
+     * Returns the inOrder traversal of the tree, the levelOrder traversal of the tree,
+     * and the height of the tree
      * @return String representing the binary tree
      */
     @Override
     public String toString()
     {
-        return inOrder();
+        return "inOrder: [" + inOrder() + "],  levelOrder: [" + levelOrder() + "],  height: " + height();
     } // end of toString
 } // end of BinarySearchTree class
