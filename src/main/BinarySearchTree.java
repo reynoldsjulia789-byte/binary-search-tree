@@ -88,6 +88,43 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     } // end of insert helper
 
     /**
+     * Searches for the Node that holds the specified data.
+     * @param data the data to search for
+     * @return returns the Node with the matching data, or null if not found.
+     */
+    private Node find(Type data)
+    {
+        return find(this.root, data);
+    } // end of find
+
+    /**
+     * Recursive find method. Recurs down the tree from this Node searching for the given data.
+     * @param node the node to search
+     * @param data data to search for
+     * @return returns the node with the matching data, null if not found
+     */
+    private Node find(Node node, Type data)
+    {
+        if (node == null)
+        {
+            return null;
+        }
+
+        if (data.compareTo(node.data) == 0)
+        {
+            return node;
+        }
+        else if (data.compareTo(node.data) < 0) // data is less than the data in the node
+        {
+            return find(node.leftChild, data); // look on the leftChild side of the tree
+        }
+        else // data is greater than the data in the node
+        {
+            return find(node.rightChild, data); // look on the rightChild side of the tree
+        }
+    } // end of find helper
+
+    /**
      * Removes the specified data from the tree if found in the tree
      * @param data the data to be removed (if found)
      * @return returns true if successful, false if not
@@ -98,10 +135,10 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         if (this.root == null)
         {
-            return  false;
+            return false;
         }
 
-        toRemove = this.root.find(data);
+        toRemove = find(data);
 
         if (toRemove == null)
         {
@@ -599,37 +636,6 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
             return newRoot;
         } // end of rightRotate
-
-        /**
-         * Recursive find method. Recurs down the tree from this Node searching for the given data.
-         * @param data data to search for
-         * @return returns the node with the matching data, null if not found
-         */
-        private Node find(Type data)
-        {
-            if (data.compareTo(this.data) == 0)
-            {
-                return this;
-            }
-            else if (data.compareTo(this.data) < 0) // data is less than the data in the node
-            {
-                if (leftChild == null)
-                {
-                    return null;
-                }
-
-                return this.leftChild.find(data); // look on the leftChild side of the tree
-            }
-            else // data is greater than the data in the node
-            {
-                if (rightChild == null)
-                {
-                    return null;
-                }
-
-                return this.rightChild.find(data); // look on the rightChild side of the tree
-            }
-        } // end of find helper
 
         /**
          * A String representation of the node
