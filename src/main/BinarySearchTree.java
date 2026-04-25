@@ -48,8 +48,23 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         {
             int leftHeight, rightHeight;
 
-            leftHeight  = this.leftChild.height;
-            rightHeight = this.rightChild.height;
+            if (this.leftChild != null)
+            {
+                leftHeight = this.leftChild.height;
+            }
+            else
+            {
+                leftHeight = 0;
+            }
+
+            if (this.rightChild != null)
+            {
+                rightHeight = this.rightChild.height;
+            }
+            else
+            {
+                rightHeight = 0;
+            }
 
             this.height        = Math.max(leftHeight, rightHeight) + 1;
             this.balanceFactor = rightHeight - leftHeight;
