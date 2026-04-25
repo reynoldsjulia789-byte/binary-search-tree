@@ -156,16 +156,20 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      */
     private Node find(Node node, Type data)
     {
+        int comparedData;
+
         if (node == null)
         {
             return null;
         }
 
-        if (data.compareTo(node.data) == 0)
+        comparedData = data.compareTo(node.data);
+
+        if (comparedData == 0)
         {
             return node;
         }
-        else if (data.compareTo(node.data) < 0) // data is less than the data in the node
+        else if (comparedData < 0) // data is less than the data in the node
         {
             return find(node.leftChild, data); // look on the leftChild side of the tree
         }
@@ -212,48 +216,46 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         parent = toRemove.parent;
 
-        if (toRemove.leftChild != null && toRemove.rightChild != null) // toRemove has 2 children
+        if ((toRemove.leftChild != null) && (toRemove.rightChild != null)) // toRemove has 2 children
         {
             toSwap        = getNodeToSwap(toRemove);
             toRemove.data = toSwap.data;
 
             return remove(toSwap); // remove the swapped Node instead
         }
-        else // toRemove has 1 or no child
+
+        // determine if a left or right child exist
+        if (toRemove.leftChild != null)
         {
-            // determine if a left or right child exist
-            if (toRemove.leftChild != null)
-            {
-                // if leftChild exists, child becomes leftChild
-                child = toRemove.leftChild;
-            }
-            else
-            {
-                // child becomes rightChild if exists, or becomes null if no children
-                child = toRemove.rightChild;
-            }
-
-            // remove node
-            if (parent == null)
-            {
-                this.root = child;
-            }
-            else if (parent.leftChild == toRemove)
-            {
-                parent.leftChild = child;
-            }
-            else
-            {
-                parent.rightChild = child;
-            }
-
-            if (child != null)
-            {
-                child.parent = parent;
-            }
-
-            return parent;
+            // if leftChild exists, child becomes leftChild
+            child = toRemove.leftChild;
         }
+        else
+        {
+            // child becomes rightChild if exists, or becomes null if no children
+            child = toRemove.rightChild;
+        }
+
+        // remove node
+        if (parent == null)
+        {
+            this.root = child;
+        }
+        else if (parent.leftChild == toRemove)
+        {
+            parent.leftChild = child;
+        }
+        else
+        {
+            parent.rightChild = child;
+        }
+
+        if (child != null)
+        {
+            child.parent = parent;
+        }
+
+        return parent;
     } // end of remove helper
 
     /**
@@ -327,8 +329,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         builder = new StringBuilder();
 
         return inOrder(root, builder)
-                .delete(builder.length() - 2,
-                        builder.length())           // remove the extra ", "
+                .delete(builder.length() - 2, builder.length()) // remove the extra ", "
                 .toString();
     } // end of inOrder
 
@@ -368,8 +369,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         builder = new StringBuilder();
 
         return postorder(root, builder)
-                .delete(builder.length() - 2,
-                        builder.length())           // remove the extra ", "
+                .delete(builder.length() - 2, builder.length())  // remove the extra ", "
                 .toString();
     } // end of postorder
 
@@ -408,8 +408,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         builder = new StringBuilder();
 
         return preorder(root, builder)
-                .delete(builder.length() - 2,
-                        builder.length())           // remove the extra ", "
+                .delete(builder.length() - 2, builder.length())  // remove the extra ", "
                 .toString();
     } // end of preorder
 
@@ -471,8 +470,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
 
         return builder
-                .delete(builder.length() - 2,
-                        builder.length())           // remove the extra ", "
+                .delete(builder.length() - 2, builder.length()) // remove the extra ", "
                 .toString();
     } // end of levelOrder
 
