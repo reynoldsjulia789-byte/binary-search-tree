@@ -13,6 +13,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         Node parent;
         Type data;
         int  balanceFactor;
+        int  height;
 
         /**
          * Constructor for Binary Search Tree Node
@@ -25,7 +26,8 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             this.parent         = null;
             this.data           = data;
             this.balanceFactor  = 0;
-        }
+            this.height         = 1;
+        } // end of default constructor
 
         /**
          * Constructor for Binary Search Tree Node that also
@@ -37,7 +39,21 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         {
             this(data);
             this.parent = parent;
-        }
+        } // end of constructor
+
+        /**
+         * Updates the Node's balance factor and height
+         */
+        public void updateStats()
+        {
+            int leftHeight, rightHeight;
+
+            leftHeight  = this.leftChild.height;
+            rightHeight = this.rightChild.height;
+
+            this.height        = Math.max(leftHeight, rightHeight) + 1;
+            this.balanceFactor = rightHeight - leftHeight;
+        } // end of updateNodeStats
 
         /**
          * A String representation of the node
@@ -47,8 +63,8 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         public String toString()
         {
             return this.data.toString();
-        }
-    }// end of private Node class
+        } // end of Node toString
+    } // end of private Node class
 
     // Root node pointer. Will be null for an empty tree.
     private Node root;
@@ -59,10 +75,11 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     public BinarySearchTree()
     {
         this.root = null;
-    }
+    } // end of constructor
 
     /**
-     * Creates a binary tree with data.
+     * Constructs a Binary search tree and inserts the
+     * passed data into the tree
      * @param data data to insert into the tree
      */
     @SafeVarargs
@@ -74,7 +91,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         {
             insert(datum);
         }
-    }
+    } // end of Varargs constructor
 
     /**
      * Inserts the given data into the binary tree.
@@ -84,22 +101,16 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      */
     public boolean insert(Type data)
     {
-        if (this.root == null)
-        {
-            this.root = new Node(data);
-            return true;
-        }
-
         try
         {
-            insert(this.root, data, null);
+            this.root = insert(this.root, data, null);
             return true;
         }
         catch (Exception caught)
         {
             return false;
         }
-    }
+    } // end of insert
 
     /**
      * Recursive insert: given a node pointer, recur down and
@@ -135,137 +146,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
 
         return balance(node);
-    } // end of insert method
-
-    private void updateBalanceFactor(Node node)
-    {
-        node.balanceFactor = height(node.rightChild) - height(node.leftChild);
-    }
-
-    /**
-     * Look up data in binary tree
-     * @param data the data to look for
-     * @return returns the node with the matching data, null if not found
-     */
-    private Node find(Type data)
-    {
-        return find(this.root, data, 1);
-    }
-
-    /**
-     * Recursive helper for find method. Given a node, recur down searching for the given data.
-     * @param node node to search
-     * @param data data to search for
-     * @return returns the node with the matching data, null if not found
-     */
-    private Node find(Node node, Type data, int level)
-    {
-        if (node == null)
-        {
-            return null; // base case 1: node is null - reached end of tree and did not find
-        }
-
-        if (Objects.equals(data, node.data))
-        {
-            return node; // base case 2: data was found - return node
-        }
-        else if (data.compareTo(node.data) < 0) // data is less than the data in the node
-        {
-            return find(node.leftChild, data, level + 1); // look on the leftChild side of the tree
-        }
-        else // data is greater than the data in the node
-        {
-            return find(node.rightChild, data, level + 1); // look on the rightChild side of the tree
-        }
-    }
-
-    /** TODO: deal with node that has 2 children
-     * TODO: balance tree after each remove
-     * Removes the data from the tree, if found
-     * @param data data to remove
-     * @return returns the removed node if found, null if not
-     */
-    public Node remove (Type data)
-    {
-        Node toRemove;
-        enum Side {LEFT, RIGHT, ROOT}
-        Side parentSide;
-
-        toRemove = find(data);
-
-        if (toRemove == null)
-        {
-            return null;
-        }
-
-        // determine if the node to be removed is on the parent's left or right side
-        if (toRemove.parent == null)
-        {
-            parentSide = Side.ROOT;
-        }
-        else if (toRemove.parent.leftChild == toRemove)
-        {
-            parentSide = Side.LEFT;
-        }
-        else
-        {
-            parentSide = Side.RIGHT;
-        }
-
-        // remove the node
-        if (toRemove.leftChild == null && toRemove.rightChild == null) // toRemove has no children
-        {
-            if (parentSide == Side.LEFT)
-            {
-                toRemove.parent.leftChild = null;
-            }
-            else if (parentSide == Side.RIGHT)
-            {
-                toRemove.parent.rightChild = null;
-            }
-            else // removing root w/ no children
-            {
-                this.root = null;
-            }
-        }
-        else if (toRemove.leftChild != null && toRemove.rightChild == null) // toRemove has a left child
-        {
-            if (parentSide == Side.LEFT)
-            {
-                toRemove.parent.leftChild = toRemove.leftChild;
-            }
-            else if (parentSide == Side.RIGHT)
-            {
-                toRemove.parent.rightChild = toRemove.leftChild;
-            }
-            else // remove root w/ left child
-            {
-                this.root = toRemove.leftChild;
-            }
-        }
-        else if (toRemove.leftChild == null) // toRemove has a right child
-        {
-            if (parentSide == Side.LEFT)
-            {
-                toRemove.parent.leftChild = toRemove.rightChild;
-            }
-            else if (parentSide == Side.ROOT)
-            {
-                toRemove.parent.rightChild = toRemove.rightChild;
-            }
-            else // remove root w/ right child
-            {
-                this.root = toRemove.rightChild;
-            }
-        }
-        else // toRemove has 2 children
-        {
-            // find next closest value node w/ no children, swap value, then delete that node
-
-        }
-
-        return toRemove;
-    } // end of Remove method
+    } // end of insert helper
 
     /**
      * Balances the passed Node by determining the necessary rotations &
@@ -275,7 +156,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      */
     private Node balance(Node node)
     {
-        updateBalanceFactor(node);
+        node.updateStats();
 
         // node is left-heavy
         if (node.balanceFactor < -1)
@@ -304,7 +185,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
 
         return node;
-    }
+    } // end of balance
 
     /**
      * Performs a left rotation on the specified node
@@ -335,11 +216,11 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
 
         // update balance factors
-        updateBalanceFactor(node);
-        updateBalanceFactor(newRoot);
+        node   .updateStats();
+        newRoot.updateStats();
 
         return newRoot;
-    }
+    } // end of leftRotate
 
     /**
      * Performs a right rotation on the specified node
@@ -370,11 +251,174 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
 
         // update balance factors
-        updateBalanceFactor(node);
-        updateBalanceFactor(newRoot);
+        node   .updateStats();
+        newRoot.updateStats();
 
         return newRoot;
-    }
+    } // end of rightRotate
+
+    /**
+     * Look up data in binary tree
+     * @param data the data to look for
+     * @return returns the node with the matching data, null if not found
+     */
+    private Node find(Type data)
+    {
+        return find(this.root, data, 1);
+    } // end of find
+
+    /**
+     * Recursive helper for find method. Given a node, recur down searching for the given data.
+     * @param node node to search
+     * @param data data to search for
+     * @return returns the node with the matching data, null if not found
+     */
+    private Node find(Node node, Type data, int level)
+    {
+        if (node == null)
+        {
+            return null; // base case 1: node is null - reached end of tree and did not find
+        }
+
+        if (Objects.equals(data, node.data))
+        {
+            return node; // base case 2: data was found - return node
+        }
+        else if (data.compareTo(node.data) < 0) // data is less than the data in the node
+        {
+            return find(node.leftChild, data, level + 1); // look on the leftChild side of the tree
+        }
+        else // data is greater than the data in the node
+        {
+            return find(node.rightChild, data, level + 1); // look on the rightChild side of the tree
+        }
+    } // end of find helper
+
+    /**
+     * Removes the specified data from the tree if found in the tree
+     * @param data the data to be removed (if found)
+     * @return returns true if successful, false if not
+     */
+    public boolean remove(Type data)
+    {
+        Node toRemove;
+
+        toRemove = find(data);
+
+        if (toRemove == null)
+        {
+            return false;   // can't remove something that doesn't exist
+        }
+
+        rebalanceTree(remove(toRemove)); // rebalances the tree from the point of deletion up to root
+
+        return true;
+    } // end of remove
+
+    /**
+     * Private helper that removes the Node from the tree
+     * @param toRemove Node to remove
+     * @return returns the parent of the deleted node
+     */
+    private Node remove(Node toRemove)
+    {
+        Node parent, child, toSwap;
+
+        parent = toRemove.parent;
+
+        if (toRemove.leftChild == null || toRemove.rightChild == null)  // toRemove has 1 or no child
+        {
+            // determine if a left or right child exist
+            if (toRemove.leftChild != null)
+            {
+                // if leftChild exists, child becomes leftChild
+                child = toRemove.leftChild;
+            }
+            else
+            {
+                // child becomes rightChild if exists, or becomes null if no children
+                child = toRemove.rightChild;
+            }
+
+            // remove node
+            if (parent == null)
+            {
+                this.root = child;
+            }
+            else if (parent.leftChild == toRemove)
+            {
+                parent.leftChild = child;
+            }
+            else
+            {
+                parent.rightChild = child;
+            }
+
+            return parent;
+        }
+        else // toRemove has 2 children
+        {
+            toSwap        = getNodeToSwap(toRemove);
+            toRemove.data = toSwap.data;
+
+            return remove(toSwap); // remove the swapped Node instead
+        }
+    } // end of remove helper
+
+    /**
+     * Private helper method for remove that finds the node to swap with
+     * the passed node. This is used in the case that the node being
+     * removed has 2 children.
+     * @param node the Node to be removed
+     * @return returns the smaller, but closest in value Node
+     */
+    private Node getNodeToSwap(Node node)
+    {
+        Node curr;
+
+        curr = node.leftChild;
+
+        while (curr.rightChild != null)
+        {
+            curr = curr.rightChild;
+        }
+
+        return curr;
+    } // end of getNodeToSwap
+
+    /**
+     * Rebalances the tree from a starting node up to the root of the tree.
+     * @param node the starting point for the rebalance
+     */
+    private void rebalanceTree(Node node)
+    {
+        Node parent, newNode;
+
+        if (node == null)
+        {
+            return;
+        }
+
+        node.updateStats();
+
+        parent  = node.parent;
+        newNode = balance(node);
+
+        if (parent == null)
+        {
+            this.root = newNode;
+        }
+        else if (parent.leftChild == node)
+        {
+            parent.leftChild = newNode;
+        }
+        else
+        {
+            parent.rightChild = newNode;
+        }
+
+        rebalanceTree(parent);
+    } // end of rebalanceTree
 
     /**
      * @param query the node to find the depth of
@@ -383,7 +427,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     private int depth(Node query)
     {
         return depth(query, 0);
-    }
+    } // end of depth
 
     /**
      * Recursive helper for depth method that takes a node to determine the depth of
@@ -400,7 +444,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
 
         return depth(query.parent, depth + 1);
-    }
+    } // end of depth helper
 
     /**
      * Finds the height of the binary search tree
@@ -409,16 +453,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     public int height()
     {
         return height(this.root, 0);
-    }
-
-    /**
-     * Finds the height of the binary search tree from a specified node
-     * @return returns the height of the tree
-     */
-    private int height(Node node)
-    {
-        return height(node, 0);
-    }
+    } // end of height (entire tree)
 
     /**
      * Recursive helper that finds the height of the tree from a starting node
@@ -439,7 +474,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         rightHeight = height(node.rightChild, height + 1);
 
         return Math.max(leftHeight, rightHeight);
-    }
+    } // end of height helper
 
     /**
      * Prints the tree contents in order from smallest to largest
@@ -449,10 +484,15 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     {
         StringBuilder builder;
 
+        if (this.root == null)
+        {
+            return "";
+        }
+
         builder = new StringBuilder();
 
         return inOrder(root, builder).delete(builder.length() - 2, builder.length()).toString().trim();
-    }
+    } // end of inOrder
 
     /**
      * Recursive helper for inOrder ToString
@@ -472,7 +512,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
 
         return builder;
-    }
+    } // end of inOrder helper
 
     /**
      * Creates a postorder string representing the binary tree
@@ -482,10 +522,15 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     {
         StringBuilder builder;
 
+        if (this.root == null)
+        {
+            return "";
+        }
+
         builder = new StringBuilder();
 
         return postorder(root, builder).delete(builder.length() - 2, builder.length()).toString().trim();
-    }
+    } // end of postorder
 
     /**
      * Recursive helper for postorder ToString
@@ -504,7 +549,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
 
         return builder;
-    }
+    } // end of postorder helper
 
     /**
      * Creates a preorder String representing the binary tree
@@ -514,10 +559,15 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     {
         StringBuilder builder;
 
+        if (this.root == null)
+        {
+            return "";
+        }
+
         builder = new StringBuilder();
 
         return preorder(root, builder).delete(builder.length() - 2, builder.length()).toString().trim();
-    }
+    } // end of preorder
 
     /**
      * Recursive helper for preorder ToString
@@ -536,7 +586,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
 
         return builder;
-    }
+    } // end of preorder helper
 
     /**
      * Creates a String representing the binary tree with elements ordered
@@ -548,6 +598,11 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         StringBuilder builder;
         Queue<Node>   q;
         Node          curr;
+
+        if (this.root == null)
+        {
+            return "";
+        }
 
         q       = new LinkedList<>();
         builder = new StringBuilder();
@@ -571,7 +626,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         }
 
         return builder.delete(builder.length() - 2, builder.length()).toString().trim();
-    }
+    } // end of levelOrder
 
     /**
      * toString method - uses inOrder
@@ -581,5 +636,5 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     public String toString()
     {
         return inOrder();
-    }
-}
+    } // end of toString
+} // end of BinarySearchTree class
