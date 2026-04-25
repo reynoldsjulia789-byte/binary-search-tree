@@ -6,101 +6,6 @@ import java.util.LinkedList;
 
 public class BinarySearchTree<Type extends Comparable<Type>>
 {
-    private class Node
-    {
-        Node leftChild;
-        Node rightChild;
-        Node parent;
-        Type data;
-        int  balanceFactor;
-        int  height;
-
-        /**
-         * Constructor for Binary Search Tree Node
-         * @param data the data to be stored in the Node
-         */
-        Node(Type data)
-        {
-            this.leftChild      = null;
-            this.rightChild     = null;
-            this.parent         = null;
-            this.data           = data;
-            this.balanceFactor  = 0;
-            this.height         = 1;
-        } // end of default constructor
-
-        /**
-         * Constructor for Binary Search Tree Node that also
-         * specifies the node's parent
-         * @param data the data to be stored in the Node
-         * @param parent the parent Node of the Node being created
-         */
-        Node(Type data, Node parent)
-        {
-            this(data);
-            this.parent = parent;
-        } // end of constructor
-
-        /**
-         * Updates the Node's balance factor and height
-         */
-        public void updateStats()
-        {
-            int leftHeight, rightHeight;
-
-            if (this.leftChild != null)
-            {
-                leftHeight = this.leftChild.height;
-            }
-            else
-            {
-                leftHeight = 0;
-            }
-
-            if (this.rightChild != null)
-            {
-                rightHeight = this.rightChild.height;
-            }
-            else
-            {
-                rightHeight = 0;
-            }
-
-            this.height        = Math.max(leftHeight, rightHeight) + 1;
-            this.balanceFactor = rightHeight - leftHeight;
-        } // end of updateNodeStats
-
-        /**
-         * A String representation of the node
-         * @return returns the Node's data, the balance factor, the height,
-         * the depth, and the number of children of the node
-         */
-        @Override
-        public String toString()
-        {
-            int totalChildren;
-
-            if (this.leftChild == null && this.rightChild == null)
-            {
-                totalChildren = 0;
-            }
-            else if (this.leftChild != null && this.rightChild != null)
-            {
-                totalChildren = 2;
-            }
-            else
-            {
-                totalChildren = 1;
-            }
-
-            return "data: " + this.data.toString() +
-                    ",  balance: " + this.balanceFactor +
-                    ",  height: " + this.height +
-                    ",  depth: " + depth(this) +
-                    ",  children: " + totalChildren;
-        } // end of Node toString
-    } // end of private Node class
-
     // Root node pointer. Will be null for an empty tree.
     private Node root;
 
@@ -180,154 +85,8 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             throw new IllegalArgumentException("duplicate data not allowed in tree");
         }
 
-        return balance(node);
+        return node.balance();
     } // end of insert helper
-
-    /**
-     * Balances the passed Node by determining the necessary rotations &
-     * calling the appropriate rotation methods
-     * @param node the Node to balance
-     * @return returns the balanced Node
-     */
-    private Node balance(Node node)
-    {
-        node.updateStats();
-
-        // node is left-heavy
-        if (node.balanceFactor < -1)
-        {
-            // check if left child is right-heavy
-            // if so, left-right rotate
-            if (node.leftChild.balanceFactor > 0)
-            {
-                node.leftChild = leftRotate(node.leftChild);
-            }
-
-            return rightRotate(node);
-        }
-
-        // node is right-heavy
-        if (node.balanceFactor > 1)
-        {
-            // check if right child is left-heavy
-            // if so, right-left rotate
-            if (node.rightChild.balanceFactor < 0)
-            {
-                node.rightChild = rightRotate(node.rightChild);
-            }
-
-            return leftRotate(node);
-        }
-
-        return node;
-    } // end of balance
-
-    /**
-     * Performs a left rotation on the specified node
-     * @param node the Node to rotate at
-     * @return returns the new root of the subtree, be sure to attach
-     * returned node to the correct spot and update the returned node's
-     * parent
-     */
-    private Node leftRotate(Node node)
-    {
-        Node newRoot, orphan, parentOfNewRoot;
-
-        newRoot            = node   .rightChild;
-        orphan             = newRoot.leftChild;
-        parentOfNewRoot    = node   .parent;
-
-        // rotate
-        newRoot.leftChild  = node;
-        node   .parent     = newRoot;
-        newRoot.parent     = parentOfNewRoot;
-
-        // re-attach orphan
-        node   .rightChild = orphan;
-
-        if (orphan != null)
-        {
-            orphan.parent  = node;
-        }
-
-        // update balance factors
-        node   .updateStats();
-        newRoot.updateStats();
-
-        return newRoot;
-    } // end of leftRotate
-
-    /**
-     * Performs a right rotation on the specified node
-     * @param node the Node to rotate at
-     * @return returns the new root of the subtree, be sure to attach
-     * returned node to the correct spot and update the returned node's
-     * parent
-     */
-    private Node rightRotate(Node node)
-    {
-        Node newRoot, orphan, parentOfNewRoot;
-
-        newRoot            = node   .leftChild;
-        orphan             = newRoot.rightChild;
-        parentOfNewRoot    = node   .parent;
-
-        // rotate
-        newRoot.rightChild = node;
-        node   .parent     = newRoot;
-        newRoot.parent     = parentOfNewRoot;
-
-        // re-attach orphan
-        node   .leftChild  = orphan;
-
-        if (orphan != null)
-        {
-            orphan.parent  = node;
-        }
-
-        // update balance factors
-        node   .updateStats();
-        newRoot.updateStats();
-
-        return newRoot;
-    } // end of rightRotate
-
-    /**
-     * Look up data in binary tree
-     * @param data the data to look for
-     * @return returns the node with the matching data, null if not found
-     */
-    private Node find(Type data)
-    {
-        return find(this.root, data);
-    } // end of find
-
-    /**
-     * Recursive helper for find method. Given a node, recur down searching for the given data.
-     * @param node node to search
-     * @param data data to search for
-     * @return returns the node with the matching data, null if not found
-     */
-    private Node find(Node node, Type data)
-    {
-        if (node == null)
-        {
-            return null;
-        }
-
-        if (Objects.equals(data, node.data))
-        {
-            return node;
-        }
-        else if (data.compareTo(node.data) < 0) // data is less than the data in the node
-        {
-            return find(node.leftChild, data); // look on the leftChild side of the tree
-        }
-        else // data is greater than the data in the node
-        {
-            return find(node.rightChild, data); // look on the rightChild side of the tree
-        }
-    } // end of find helper
 
     /**
      * Removes the specified data from the tree if found in the tree
@@ -338,7 +97,12 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     {
         Node toRemove;
 
-        toRemove = find(data);
+        if (this.root == null)
+        {
+            return  false;
+        }
+
+        toRemove = this.root.find(data);
 
         if (toRemove == null)
         {
@@ -437,7 +201,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         node.updateStats();
 
         parent  = node.parent;
-        newNode = balance(node);
+        newNode = node.balance();
 
         if (parent == null)
         {
@@ -454,25 +218,6 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         rebalanceTree(parent);
     } // end of rebalanceTree
-
-    /**
-     * @param query the node to find the depth of
-     * @return returns the depth of the node from the root of the tree
-     */
-    private int depth(Node query)
-    {
-        Node curr;
-        int  result;
-
-        result = 0;
-
-        for (curr = query; curr.parent != null; curr = curr.parent)
-        {
-            result++;
-        }
-
-        return result;
-    } // end of depth
 
     /**
      * Finds the height of the binary search tree
@@ -663,4 +408,255 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     {
         return "inOrder: [" + inOrder() + "],  levelOrder: [" + levelOrder() + "],  height: " + height();
     } // end of toString
+
+    private class Node
+    {
+        Node leftChild;
+        Node rightChild;
+        Node parent;
+        Type data;
+        int  balanceFactor;
+        int  height;
+
+        /**
+         * Constructor for Binary Search Tree Node
+         * @param data the data to be stored in the Node
+         */
+        Node(Type data)
+        {
+            this.leftChild      = null;
+            this.rightChild     = null;
+            this.parent         = null;
+            this.data           = data;
+            this.balanceFactor  = 0;
+            this.height         = 1;
+        } // end of default constructor
+
+        /**
+         * Constructor for Binary Search Tree Node that also
+         * specifies the node's parent
+         * @param data the data to be stored in the Node
+         * @param parent the parent Node of the Node being created
+         */
+        Node(Type data, Node parent)
+        {
+            this(data);
+            this.parent = parent;
+        } // end of constructor
+
+        /**
+         * Updates the Node's balance factor and height
+         */
+        public void updateStats()
+        {
+            int leftHeight, rightHeight;
+
+            if (this.leftChild != null)
+            {
+                leftHeight = this.leftChild.height;
+            }
+            else
+            {
+                leftHeight = 0;
+            }
+
+            if (this.rightChild != null)
+            {
+                rightHeight = this.rightChild.height;
+            }
+            else
+            {
+                rightHeight = 0;
+            }
+
+            this.height        = Math.max(leftHeight, rightHeight) + 1;
+            this.balanceFactor = rightHeight - leftHeight;
+        } // end of updateNodeStats
+
+        /**
+         * Calculates the distance of this node from the root of the tree
+         * @return returns the depth of the node from the root of the tree
+         */
+        private int depth()
+        {
+            Node curr;
+            int  result;
+
+            result = 0;
+
+            for (curr = this; curr.parent != null; curr = curr.parent)
+            {
+                result++;
+            }
+
+            return result;
+        } // end of depth
+
+        /**
+         * Balances this Node by determining the necessary rotations &
+         * calling the appropriate rotation methods
+         * @return returns the balanced Node
+         */
+        private Node balance()
+        {
+            this.updateStats();
+
+            // node is left-heavy
+            if (this.balanceFactor < -1)
+            {
+                // check if left child is right-heavy
+                // if so, left-right rotate
+                if (this.leftChild.balanceFactor > 0)
+                {
+                    this.leftChild = this.leftChild.leftRotate();
+                }
+
+                return rightRotate();
+            }
+
+            // node is right-heavy
+            if (this.balanceFactor > 1)
+            {
+                // check if right child is left-heavy
+                // if so, right-left rotate
+                if (this.rightChild.balanceFactor < 0)
+                {
+                    this.rightChild = this.rightChild.rightRotate();
+                }
+
+                return leftRotate();
+            }
+
+            return this;
+        } // end of balance
+
+        /**
+         * Performs a left rotation on this Node
+         * @return returns the new root of the subtree, be sure to attach
+         * returned node to the correct spot and update the returned node's
+         * parent
+         */
+        private Node leftRotate()
+        {
+            Node newRoot, orphan, parentOfNewRoot;
+
+            newRoot            = this   .rightChild;
+            orphan             = newRoot.leftChild;
+            parentOfNewRoot    = this   .parent;
+
+            // rotate
+            newRoot.leftChild  = this;
+            this   .parent     = newRoot;
+            newRoot.parent     = parentOfNewRoot;
+
+            // re-attach orphan
+            this   .rightChild = orphan;
+
+            if (orphan != null)
+            {
+                orphan.parent  = this;
+            }
+
+            // update balance factors
+            this   .updateStats();
+            newRoot.updateStats();
+
+            return newRoot;
+        } // end of leftRotate
+
+        /**
+         * Performs a right rotation on this Node
+         * @return returns the new root of the subtree, be sure to attach
+         * returned node to the correct spot and update the returned node's
+         * parent
+         */
+        private Node rightRotate()
+        {
+            Node newRoot, orphan, parentOfNewRoot;
+
+            newRoot            = this   .leftChild;
+            orphan             = newRoot.rightChild;
+            parentOfNewRoot    = this   .parent;
+
+            // rotate
+            newRoot.rightChild = this;
+            this   .parent     = newRoot;
+            newRoot.parent     = parentOfNewRoot;
+
+            // re-attach orphan
+            this   .leftChild  = orphan;
+
+            if (orphan != null)
+            {
+                orphan.parent  = this;
+            }
+
+            // update balance factors
+            this   .updateStats();
+            newRoot.updateStats();
+
+            return newRoot;
+        } // end of rightRotate
+
+        /**
+         * Recursive find method. Recurs down the tree from this Node searching for the given data.
+         * @param data data to search for
+         * @return returns the node with the matching data, null if not found
+         */
+        private Node find(Type data)
+        {
+            if (Objects.equals(data, this.data))
+            {
+                return this;
+            }
+            else if (data.compareTo(this.data) < 0) // data is less than the data in the node
+            {
+                if (leftChild == null)
+                {
+                    return null;
+                }
+
+                return this.leftChild.find(data); // look on the leftChild side of the tree
+            }
+            else // data is greater than the data in the node
+            {
+                if (rightChild == null)
+                {
+                    return null;
+                }
+
+                return this.rightChild.find(data); // look on the rightChild side of the tree
+            }
+        } // end of find helper
+
+        /**
+         * A String representation of the node
+         * @return returns the Node's data, the balance factor, the height,
+         * the depth, and the number of children of the node
+         */
+        @Override
+        public String toString()
+        {
+            int totalChildren;
+
+            if (this.leftChild == null && this.rightChild == null)
+            {
+                totalChildren = 0;
+            }
+            else if (this.leftChild != null && this.rightChild != null)
+            {
+                totalChildren = 2;
+            }
+            else
+            {
+                totalChildren = 1;
+            }
+
+            return "data: " + this.data.toString() +
+                    ",  balance: " + this.balanceFactor +
+                    ",  height: " + this.height +
+                    ",  depth: " + depth() +
+                    ",  children: " + totalChildren;
+        } // end of Node toString
+    } // end of private Node class
 } // end of BinarySearchTree class
