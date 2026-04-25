@@ -211,7 +211,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         {
             // check if right child is left-heavy
             // if so, right-left rotate
-            if(node.rightChild.balanceFactor < 0)
+            if (node.rightChild.balanceFactor < 0)
             {
                 node.rightChild = rightRotate(node.rightChild);
             }
@@ -299,7 +299,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      */
     private Node find(Type data)
     {
-        return find(this.root, data, 1);
+        return find(this.root, data);
     } // end of find
 
     /**
@@ -308,24 +308,24 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param data data to search for
      * @return returns the node with the matching data, null if not found
      */
-    private Node find(Node node, Type data, int level)
+    private Node find(Node node, Type data)
     {
         if (node == null)
         {
-            return null; // base case 1: node is null - reached end of tree and did not find
+            return null;
         }
 
         if (Objects.equals(data, node.data))
         {
-            return node; // base case 2: data was found - return node
+            return node;
         }
         else if (data.compareTo(node.data) < 0) // data is less than the data in the node
         {
-            return find(node.leftChild, data, level + 1); // look on the leftChild side of the tree
+            return find(node.leftChild, data); // look on the leftChild side of the tree
         }
         else // data is greater than the data in the node
         {
-            return find(node.rightChild, data, level + 1); // look on the rightChild side of the tree
+            return find(node.rightChild, data); // look on the rightChild side of the tree
         }
     } // end of find helper
 
@@ -361,7 +361,14 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         parent = toRemove.parent;
 
-        if (toRemove.leftChild == null || toRemove.rightChild == null)  // toRemove has 1 or no child
+        if (toRemove.leftChild != null && toRemove.rightChild != null) // toRemove has 2 children
+        {
+            toSwap        = getNodeToSwap(toRemove);
+            toRemove.data = toSwap.data;
+
+            return remove(toSwap); // remove the swapped Node instead
+        }
+        else // toRemove has 1 or no child
         {
             // determine if a left or right child exist
             if (toRemove.leftChild != null)
@@ -390,13 +397,6 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             }
 
             return parent;
-        }
-        else // toRemove has 2 children
-        {
-            toSwap        = getNodeToSwap(toRemove);
-            toRemove.data = toSwap.data;
-
-            return remove(toSwap); // remove the swapped Node instead
         }
     } // end of remove helper
 
@@ -461,25 +461,18 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      */
     private int depth(Node query)
     {
-        return depth(query, 0);
-    } // end of depth
+        Node curr;
+        int  result;
 
-    /**
-     * Recursive helper for depth method that takes a node to determine the depth of
-     * and the current depth and returns the depth of the node.
-     * @param query the node to determine the depth of
-     * @param depth the current calculated depth
-     * @return returns the depth of the node
-     */
-    private int depth(Node query, int depth)
-    {
-        if (query.parent == null)
+        result = 0;
+
+        for (curr = query; curr.parent != null; curr = curr.parent)
         {
-            return depth;
+            result++;
         }
 
-        return depth(query.parent, depth + 1);
-    } // end of depth helper
+        return result;
+    } // end of depth
 
     /**
      * Finds the height of the binary search tree
@@ -487,29 +480,13 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      */
     public int height()
     {
-        return height(this.root, 0);
-    } // end of height (entire tree)
-
-    /**
-     * Recursive helper that finds the height of the tree from a starting node
-     * @param node node to start at
-     * @param height current calculated height
-     * @return returns the height of the tree
-     */
-    private int height(Node node, int height)
-    {
-        int leftHeight, rightHeight;
-
-        if (node == null)
+        if (this.root == null)
         {
-            return height;
+            return 0;
         }
 
-        leftHeight  = height(node.leftChild, height + 1);
-        rightHeight = height(node.rightChild, height + 1);
-
-        return Math.max(leftHeight, rightHeight);
-    } // end of height helper
+        return this.root.height;
+    } // end of height (entire tree)
 
     /**
      * Prints the tree contents in order from smallest to largest
@@ -526,7 +503,10 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         builder = new StringBuilder();
 
-        return inOrder(root, builder).delete(builder.length() - 2, builder.length()).toString().trim();
+        return inOrder(root, builder)
+                .delete(builder.length() - 2,
+                        builder.length())           // remove the extra ", "
+                .toString();
     } // end of inOrder
 
     /**
@@ -564,7 +544,10 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         builder = new StringBuilder();
 
-        return postorder(root, builder).delete(builder.length() - 2, builder.length()).toString().trim();
+        return postorder(root, builder)
+                .delete(builder.length() - 2,
+                        builder.length())           // remove the extra ", "
+                .toString();
     } // end of postorder
 
     /**
@@ -601,7 +584,10 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         builder = new StringBuilder();
 
-        return preorder(root, builder).delete(builder.length() - 2, builder.length()).toString().trim();
+        return preorder(root, builder)
+                .delete(builder.length() - 2,
+                        builder.length())           // remove the extra ", "
+                .toString();
     } // end of preorder
 
     /**
@@ -631,7 +617,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     public String levelOrder()
     {
         StringBuilder builder;
-        Queue<Node>   q;
+        Queue<Node>   queue;
         Node          curr;
 
         if (this.root == null)
@@ -639,28 +625,32 @@ public class BinarySearchTree<Type extends Comparable<Type>>
             return "";
         }
 
-        q       = new LinkedList<>();
+        queue       = new LinkedList<>();
         builder = new StringBuilder();
 
-        q.add(this.root);
+        queue.add(this.root);
 
-        while (!q.isEmpty())
+        while (!queue.isEmpty())
         {
-            curr = q.remove();
+            curr = queue.remove();
 
             if (curr.leftChild != null)
             {
-                q.add(curr.leftChild);
+                queue.add(curr.leftChild);
             }
+
             if (curr.rightChild != null)
             {
-                q.add(curr.rightChild);
+                queue.add(curr.rightChild);
             }
 
             builder.append(curr.data).append(", ");
         }
 
-        return builder.delete(builder.length() - 2, builder.length()).toString().trim();
+        return builder
+                .delete(builder.length() - 2,
+                        builder.length())           // remove the extra ", "
+                .toString();
     } // end of levelOrder
 
     /**
