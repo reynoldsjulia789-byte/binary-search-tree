@@ -263,19 +263,57 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     }
 
     /**
-     * TODO: finish leftRotate method
+     * TODO: don't forget in calling method to attach return to proper spot & update parent
+     * Performs a left rotation on the specified node
+     * @param node the Node to rotate at
+     * @return returns the new root of the subtree, be sure to attach
+     * returned node to the correct spot and update the returned node's
+     * parent
      */
-    private void leftRotate()
+    private Node leftRotate(Node node)
     {
+        Node newParent, orphan;
 
+        newParent            = node     .rightChild;
+        orphan               = newParent.leftChild;
+
+        // rotate
+        newParent.leftChild  = node;
+        node     .parent     = newParent;
+        newParent.parent     = null;
+
+        // re-attach orphan
+        node     .rightChild = orphan;
+        orphan   .parent     = node;
+
+        return newParent;
     }
 
     /**
-     * TODO: finish rightRotate method
+     * TODO: don't forget in calling method to attach return to proper spot & update parent
+     * Performs a right rotation on the specified node
+     * @param node the Node to rotate at
+     * @return returns the new root of the subtree, be sure to attach
+     * returned node to the correct spot and update the returned node's
+     * parent
      */
-    private void rightRotate()
+    private Node rightRotate(Node node)
     {
+        Node newParent, orphan;
 
+        newParent            = node     .leftChild;
+        orphan               = newParent.rightChild;
+
+        // rotate
+        newParent.rightChild = node;
+        node     .parent     = newParent;
+        newParent.parent     = null;
+
+        // re-attach orphan
+        node     .leftChild  = orphan;
+        orphan   .parent     = node;
+
+        return newParent;
     }
 
     /**
