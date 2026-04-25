@@ -328,7 +328,11 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         // re-attach orphan
         node   .rightChild = orphan;
-        orphan .parent     = node;
+
+        if (orphan != null)
+        {
+            orphan.parent  = node;
+        }
 
         // update balance factors
         updateBalanceFactor(node);
@@ -359,7 +363,11 @@ public class BinarySearchTree<Type extends Comparable<Type>>
 
         // re-attach orphan
         node   .leftChild  = orphan;
-        orphan .parent     = node;
+
+        if (orphan != null)
+        {
+            orphan.parent  = node;
+        }
 
         // update balance factors
         updateBalanceFactor(node);
