@@ -182,27 +182,27 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     /**
      * Removes the specified data from the tree if found in the tree
      * @param data the data to be removed (if found)
-     * @return returns true if successful, false if not
+     * @return returns the removed data if successful, null if not
      */
-    public boolean remove(Type data)
+    public Type remove(Type data)
     {
         Node toRemove;
 
         if (this.root == null)
         {
-            return false;
+            return null;
         }
 
         toRemove = find(data);
 
         if (toRemove == null)
         {
-            return false;   // can't remove something that doesn't exist
+            return null;   // can't remove something that doesn't exist
         }
 
         rebalanceTree(remove(toRemove)); // rebalances the tree from the point of deletion up to root
 
-        return true;
+        return toRemove.data;
     } // end of remove
 
     /**
