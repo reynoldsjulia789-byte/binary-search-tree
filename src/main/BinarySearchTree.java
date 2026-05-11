@@ -50,9 +50,9 @@ public class BinarySearchTree<T extends Comparable<T>>
      * Calculates the distance of this node from the root of the tree
      * @return returns the depth of the node from the root of the tree
      */
-    private int depth(BinaryNode<T> node)
+    private int depth(BinaryNode<T> query)
     {
-        return node.depth();
+        return query.depth();
     } // end of depth
 
     /**
