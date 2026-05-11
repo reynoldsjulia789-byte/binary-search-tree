@@ -47,6 +47,15 @@ public class BinarySearchTree<T extends Comparable<T>>
     } // end of height (entire tree)
 
     /**
+     * Calculates the distance of this node from the root of the tree
+     * @return returns the depth of the node from the root of the tree
+     */
+    private int depth(BinaryNode<T> node)
+    {
+        return node.depth();
+    } // end of depth
+
+    /**
      * Inserts the given key into the binary tree.
      * Duplicate keys not allowed. Null key not allowed.
      * @param key the key to insert into the tree
@@ -696,9 +705,9 @@ public class BinarySearchTree<T extends Comparable<T>>
             }
 
             return "key: " + this.key.toString() +
-                    ",  balance: " + this.balanceFactor +
-                    ",  height: " + this.height +
-                    ",  depth: " + depth() +
+                    ",  balance: "  + this.balanceFactor +
+                    ",  height: "   + this.height +
+                    ",  depth: "    + depth() +
                     ",  children: " + totalChildren;
         } // end of Node toString
     } // end of private Node class
