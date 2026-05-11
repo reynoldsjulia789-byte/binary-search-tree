@@ -18,15 +18,15 @@ public class BinarySearchTree<T extends Comparable<T>>
 
     /**
      * Constructs a Binary search tree and inserts the
-     * passed data into the tree
-     * @param data data to insert into the tree
+     * passed key into the tree
+     * @param key key to insert into the tree
      */
     @SafeVarargs
-    public BinarySearchTree(T... data)
+    public BinarySearchTree(T... key)
     {
         this();
 
-        for (T datum : data)
+        for (T datum : key)
         {
             insert(datum);
         }
@@ -47,21 +47,21 @@ public class BinarySearchTree<T extends Comparable<T>>
     } // end of height (entire tree)
 
     /**
-     * Inserts the given data into the binary tree.
-     * Duplicate data not allowed. Null data not allowed.
-     * @param data the data to insert into the tree
+     * Inserts the given key into the binary tree.
+     * Duplicate keys not allowed. Null key not allowed.
+     * @param key the key to insert into the tree
      * @return true if successful, false if not
      */
-    public boolean insert(T data)
+    public boolean insert(T key)
     {
-        if (data == null)
+        if (key == null)
         {
             return false;
         }
 
         try
         {
-            this.root = insert(this.root, data, null);
+            this.root = insert(this.root, key, null);
             return true;
         }
         catch (IllegalArgumentException caught)
@@ -72,58 +72,58 @@ public class BinarySearchTree<T extends Comparable<T>>
 
     /**
      * Recursive insert: given a node pointer, recur down and
-     * insert the given data into the tree. Returns the new
+     * insert the given key into the tree. Returns the new
      * node pointer.
      * @param node node to look at
-     * @param data the data to insert
+     * @param key the key to insert
      * @param parent the parent of the node to look at
      * @return returns the new node if inserted, throws an exception if not
-     * @throws IllegalArgumentException if passed duplicate data
+     * @throws IllegalArgumentException if passed duplicate key
      */
-    private BinaryNode<T> insert(BinaryNode<T> node, T data, BinaryNode<T> parent) throws IllegalArgumentException
+    private BinaryNode<T> insert(BinaryNode<T> node, T key, BinaryNode<T> parent) throws IllegalArgumentException
     {
         int compared;
 
         if (node == null)
         {
-            return new BinaryNode<>(data, parent);
+            return new BinaryNode<>(key, parent);
         }
 
-        compared = data.compareTo(node.data);
+        compared = key.compareTo(node.key);
 
         if (compared > 0)
         {
-            node.rightChild = insert(node.rightChild, data, node);
+            node.rightChild = insert(node.rightChild, key, node);
         }
         else if (compared < 0)
         {
-            node.leftChild = insert(node.leftChild, data, node);
+            node.leftChild = insert(node.leftChild, key, node);
         }
         else
         {
-            throw new IllegalArgumentException("duplicate data not allowed in tree");
+            throw new IllegalArgumentException("duplicate key not allowed in tree");
         }
 
         return node.balance();
     } // end of insert helper
 
     /**
-     * Returns the location (depth of the Node with the matching data)
+     * Returns the location (depth of the Node with the matching key)
      * in the tree if found, -1 if not
-     * @param data the data to search for
-     * @return returns the location of the data in the tree or -1 if not found
-     * @throws IllegalArgumentException if the data to look up is null
+     * @param key the key to search for
+     * @return returns the location of the key in the tree or -1 if not found
+     * @throws IllegalArgumentException if the key to look up is null
      */
-    public int lookUp(T data) throws IllegalArgumentException
+    public int lookUp(T key) throws IllegalArgumentException
     {
         BinaryNode<T> match;
 
-        if (data == null)
+        if (key == null)
         {
-            throw new IllegalArgumentException("can't look up null data. null data not allowed in tree");
+            throw new IllegalArgumentException("can't look up null key. null key not allowed in tree");
         }
 
-        match = find(data);
+        match = find(key);
 
         if (match == null)
         {
@@ -133,58 +133,58 @@ public class BinarySearchTree<T extends Comparable<T>>
     }
 
     /**
-     * Searches for the Node that holds the specified data.
-     * @param data the data to search for
-     * @return returns the Node with the matching data, or null if not found.
-     * @throws IllegalArgumentException if the data to find is null
+     * Searches for the Node that holds the specified key.
+     * @param key the key to search for
+     * @return returns the Node with the matching key, or null if not found.
+     * @throws IllegalArgumentException if the key to find is null
      */
-    private BinaryNode<T> find(T data) throws IllegalArgumentException
+    private BinaryNode<T> find(T key) throws IllegalArgumentException
     {
-        if (data == null)
+        if (key == null)
         {
-            throw new IllegalArgumentException("can't look up null data. null data not allowed in tree");
+            throw new IllegalArgumentException("can't look up null key. null key not allowed in tree");
         }
 
-        return find(this.root, data);
+        return find(this.root, key);
     } // end of find
 
     /**
-     * Recursive find method. Recurs down the tree from this Node searching for the given data.
+     * Recursive find method. Recurs down the tree from this Node searching for the given key.
      * @param node the node to search
-     * @param data data to search for
-     * @return returns the node with the matching data, null if not found
+     * @param key key to search for
+     * @return returns the node with the matching key, null if not found
      */
-    private BinaryNode<T> find(BinaryNode<T> node, T data)
+    private BinaryNode<T> find(BinaryNode<T> node, T key)
     {
-        int comparedData;
+        int comparedKey;
 
         if (node == null)
         {
             return null;
         }
 
-        comparedData = data.compareTo(node.data);
+        comparedKey = key.compareTo(node.key);
 
-        if (comparedData == 0)
+        if (comparedKey == 0)
         {
             return node;
         }
-        else if (comparedData < 0) // data is less than the data in the node
+        else if (comparedKey < 0) // key is less than the key in the node
         {
-            return find(node.leftChild, data); // look on the leftChild side of the tree
+            return find(node.leftChild, key); // look on the leftChild side of the tree
         }
-        else // data is greater than the data in the node
+        else // key is greater than the key in the node
         {
-            return find(node.rightChild, data); // look on the rightChild side of the tree
+            return find(node.rightChild, key); // look on the rightChild side of the tree
         }
     } // end of find helper
 
     /**
-     * Removes the specified data from the tree if found in the tree
-     * @param data the data to be removed (if found)
-     * @return returns the removed data if successful, null if not
+     * Removes the specified key from the tree if found in the tree
+     * @param key the key to be removed (if found)
+     * @return returns the removed key if successful, null if not
      */
-    public T remove(T data)
+    public T remove(T key)
     {
         BinaryNode<T> toRemove;
 
@@ -193,7 +193,7 @@ public class BinarySearchTree<T extends Comparable<T>>
             return null;
         }
 
-        toRemove = find(data);
+        toRemove = find(key);
 
         if (toRemove == null)
         {
@@ -202,7 +202,7 @@ public class BinarySearchTree<T extends Comparable<T>>
 
         rebalanceTree(remove(toRemove)); // rebalances the tree from the point of deletion up to root
 
-        return toRemove.data;
+        return toRemove.key;
     } // end of remove
 
     /**
@@ -219,7 +219,7 @@ public class BinarySearchTree<T extends Comparable<T>>
         if ((toRemove.leftChild != null) && (toRemove.rightChild != null)) // toRemove has 2 children
         {
             toSwap        = getNodeToSwap(toRemove);
-            toRemove.data = toSwap.data;
+            toRemove.key = toSwap.key;
 
             return remove(toSwap); // remove the swapped Node instead
         }
@@ -337,7 +337,7 @@ public class BinarySearchTree<T extends Comparable<T>>
      * Recursive helper for inOrder ToString
      * @param node node of the tree
      * @param builder string builder object
-     * @return StringBuilder with tree data in order
+     * @return StringBuilder with tree key in order
      */
     private StringBuilder inOrder(BinaryNode<T> node, StringBuilder builder)
     {
@@ -345,7 +345,7 @@ public class BinarySearchTree<T extends Comparable<T>>
         {
             inOrder(node.leftChild, builder);
 
-            builder.append(node.data).append(", ");
+            builder.append(node.key).append(", ");
 
             inOrder(node.rightChild, builder);
         }
@@ -377,7 +377,7 @@ public class BinarySearchTree<T extends Comparable<T>>
      * Recursive helper for postorder ToString
      * @param node node of the tree
      * @param builder string builder object
-     * @return StringBuilder with tree data in order
+     * @return StringBuilder with tree key in order
      */
     private StringBuilder postorder(BinaryNode<T> node, StringBuilder builder)
     {
@@ -386,7 +386,7 @@ public class BinarySearchTree<T extends Comparable<T>>
             postorder(node.leftChild, builder);
             postorder(node.rightChild, builder);
 
-            builder.append(node.data).append(", ");
+            builder.append(node.key).append(", ");
         }
 
         return builder;
@@ -416,13 +416,13 @@ public class BinarySearchTree<T extends Comparable<T>>
      * Recursive helper for preorder ToString
      * @param node node of the tree
      * @param builder string builder object
-     * @return StringBuilder with tree data in order
+     * @return StringBuilder with tree key in order
      */
     private StringBuilder preorder(BinaryNode<T> node, StringBuilder builder)
     {
         if (node != null)
         {
-            builder.append(node.data).append(", ");
+            builder.append(node.key).append(", ");
 
             preorder(node.leftChild, builder);
             preorder(node.rightChild, builder);
@@ -466,7 +466,7 @@ public class BinarySearchTree<T extends Comparable<T>>
                 queue.add(curr.rightChild);
             }
 
-            builder.append(curr.data).append(", ");
+            builder.append(curr.key).append(", ");
         }
 
         return builder
@@ -490,20 +490,20 @@ public class BinarySearchTree<T extends Comparable<T>>
         BinaryNode<T> leftChild;
         BinaryNode<T> rightChild;
         BinaryNode<T> parent;
-        T data;
+        T key;
         int  balanceFactor;
         int  height;
 
         /**
          * Constructor for Binary Search Tree BinaryNode<T>
-         * @param data the data to be stored in the Node
+         * @param key the key to be stored in the Node
          */
-        BinaryNode(T data)
+        BinaryNode(T key)
         {
             this.leftChild      = null;
             this.rightChild     = null;
             this.parent         = null;
-            this.data           = data;
+            this.key            = key;
             this.balanceFactor  = 0;
             this.height         = 1;
         } // end of default constructor
@@ -511,12 +511,12 @@ public class BinarySearchTree<T extends Comparable<T>>
         /**
          * Constructor for Binary Search Tree Node that also
          * specifies the node's parent
-         * @param data the data to be stored in the Node
+         * @param key the key to be stored in the Node
          * @param parent the parent Node of the Node being created
          */
-        BinaryNode(T data, BinaryNode<T> parent)
+        BinaryNode(T key, BinaryNode<T> parent)
         {
-            this(data);
+            this(key);
             this.parent = parent;
         } // end of constructor
 
@@ -674,7 +674,7 @@ public class BinarySearchTree<T extends Comparable<T>>
 
         /**
          * A String representation of the node
-         * @return returns the Node's data, the balance factor, the height,
+         * @return returns the Node's key, the balance factor, the height,
          * the depth, and the number of children of the node
          */
         @Override
@@ -695,7 +695,7 @@ public class BinarySearchTree<T extends Comparable<T>>
                 totalChildren = 1;
             }
 
-            return "data: " + this.data.toString() +
+            return "key: " + this.key.toString() +
                     ",  balance: " + this.balanceFactor +
                     ",  height: " + this.height +
                     ",  depth: " + depth() +
