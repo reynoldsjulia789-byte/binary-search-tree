@@ -3,10 +3,10 @@ package main;
 import java.util.Queue;
 import java.util.LinkedList;
 
-public class BinarySearchTree<Type extends Comparable<Type>>
+public class BinarySearchTree<T extends Comparable<T>>
 {
     // Root node pointer. Will be null for an empty tree.
-    private Node root;
+    private BinaryNode<T> root;
 
     /**
      * Creates an empty binary tree -- a null root pointer.
@@ -22,11 +22,11 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param data data to insert into the tree
      */
     @SafeVarargs
-    public BinarySearchTree(Type... data)
+    public BinarySearchTree(T... data)
     {
         this();
 
-        for (Type datum : data)
+        for (T datum : data)
         {
             insert(datum);
         }
@@ -52,7 +52,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param data the data to insert into the tree
      * @return true if successful, false if not
      */
-    public boolean insert(Type data)
+    public boolean insert(T data)
     {
         if (data == null)
         {
@@ -80,13 +80,13 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @return returns the new node if inserted, throws an exception if not
      * @throws IllegalArgumentException if passed duplicate data
      */
-    private Node insert(Node node, Type data, Node parent) throws IllegalArgumentException
+    private BinaryNode<T> insert(BinaryNode<T> node, T data, BinaryNode<T> parent) throws IllegalArgumentException
     {
         int compared;
 
         if (node == null)
         {
-            return new Node(data, parent);
+            return new BinaryNode<>(data, parent);
         }
 
         compared = data.compareTo(node.data);
@@ -114,9 +114,9 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @return returns the location of the data in the tree or -1 if not found
      * @throws IllegalArgumentException if the data to look up is null
      */
-    public int lookUp(Type data) throws IllegalArgumentException
+    public int lookUp(T data) throws IllegalArgumentException
     {
-        Node match;
+        BinaryNode<T> match;
 
         if (data == null)
         {
@@ -138,7 +138,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @return returns the Node with the matching data, or null if not found.
      * @throws IllegalArgumentException if the data to find is null
      */
-    private Node find(Type data) throws IllegalArgumentException
+    private BinaryNode<T> find(T data) throws IllegalArgumentException
     {
         if (data == null)
         {
@@ -154,7 +154,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param data data to search for
      * @return returns the node with the matching data, null if not found
      */
-    private Node find(Node node, Type data)
+    private BinaryNode<T> find(BinaryNode<T> node, T data)
     {
         int comparedData;
 
@@ -184,9 +184,9 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param data the data to be removed (if found)
      * @return returns the removed data if successful, null if not
      */
-    public Type remove(Type data)
+    public T remove(T data)
     {
-        Node toRemove;
+        BinaryNode<T> toRemove;
 
         if (this.root == null)
         {
@@ -210,9 +210,9 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param toRemove Node to remove
      * @return returns the parent of the deleted node
      */
-    private Node remove(Node toRemove)
+    private BinaryNode<T> remove(BinaryNode<T> toRemove)
     {
-        Node parent, child, toSwap;
+        BinaryNode<T> parent, child, toSwap;
 
         parent = toRemove.parent;
 
@@ -265,9 +265,9 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param node the Node to be removed
      * @return returns the smaller, but closest in value Node
      */
-    private Node getNodeToSwap(Node node)
+    private BinaryNode<T> getNodeToSwap(BinaryNode<T> node)
     {
-        Node curr;
+        BinaryNode<T> curr;
 
         curr = node.leftChild;
 
@@ -283,9 +283,9 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * Rebalances the tree from a starting node up to the root of the tree.
      * @param node the starting point for the rebalance
      */
-    private void rebalanceTree(Node node)
+    private void rebalanceTree(BinaryNode<T> node)
     {
-        Node parent, newNode;
+        BinaryNode<T> parent, newNode;
 
         if (node == null)
         {
@@ -339,7 +339,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param builder string builder object
      * @return StringBuilder with tree data in order
      */
-    private StringBuilder inOrder(Node node, StringBuilder builder)
+    private StringBuilder inOrder(BinaryNode<T> node, StringBuilder builder)
     {
         if (node != null)
         {
@@ -379,7 +379,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param builder string builder object
      * @return StringBuilder with tree data in order
      */
-    private StringBuilder postorder(Node node, StringBuilder builder)
+    private StringBuilder postorder(BinaryNode<T> node, StringBuilder builder)
     {
         if (node != null)
         {
@@ -418,7 +418,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
      * @param builder string builder object
      * @return StringBuilder with tree data in order
      */
-    private StringBuilder preorder(Node node, StringBuilder builder)
+    private StringBuilder preorder(BinaryNode<T> node, StringBuilder builder)
     {
         if (node != null)
         {
@@ -439,8 +439,8 @@ public class BinarySearchTree<Type extends Comparable<Type>>
     public String levelOrder()
     {
         StringBuilder builder;
-        Queue<Node>   queue;
-        Node          curr;
+        Queue<BinaryNode<T>>   queue;
+        BinaryNode<T>          curr;
 
         if (this.root == null)
         {
@@ -485,20 +485,20 @@ public class BinarySearchTree<Type extends Comparable<Type>>
         return "inOrder: [" + inOrder() + "],  levelOrder: [" + levelOrder() + "],  height: " + height();
     } // end of toString
 
-    private class Node
+    private class BinaryNode<T>
     {
-        Node leftChild;
-        Node rightChild;
-        Node parent;
-        Type data;
+        BinaryNode<T> leftChild;
+        BinaryNode<T> rightChild;
+        BinaryNode<T> parent;
+        T data;
         int  balanceFactor;
         int  height;
 
         /**
-         * Constructor for Binary Search Tree Node
+         * Constructor for Binary Search Tree BinaryNode<T>
          * @param data the data to be stored in the Node
          */
-        Node(Type data)
+        BinaryNode(T data)
         {
             this.leftChild      = null;
             this.rightChild     = null;
@@ -514,7 +514,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
          * @param data the data to be stored in the Node
          * @param parent the parent Node of the Node being created
          */
-        Node(Type data, Node parent)
+        BinaryNode(T data, BinaryNode<T> parent)
         {
             this(data);
             this.parent = parent;
@@ -555,7 +555,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
          */
         private int depth()
         {
-            Node curr;
+            BinaryNode<T> curr;
             int  result;
 
             result = 0;
@@ -573,7 +573,7 @@ public class BinarySearchTree<Type extends Comparable<Type>>
          * calling the appropriate rotation methods
          * @return returns the balanced Node
          */
-        private Node balance()
+        private BinaryNode<T> balance()
         {
             this.updateStats();
 
@@ -611,9 +611,9 @@ public class BinarySearchTree<Type extends Comparable<Type>>
          * @return returns the new root of the subtree, caller must attach
          * returned node to the correct spot
          */
-        private Node leftRotate()
+        private BinaryNode<T> leftRotate()
         {
-            Node newRoot, orphan, parentOfNewRoot;
+            BinaryNode<T> newRoot, orphan, parentOfNewRoot;
 
             newRoot            = this   .rightChild;
             orphan             = newRoot.leftChild;
@@ -644,9 +644,9 @@ public class BinarySearchTree<Type extends Comparable<Type>>
          * @return returns the new root of the subtree, caller must attach
          * returned node to the correct spot
          */
-        private Node rightRotate()
+        private BinaryNode<T> rightRotate()
         {
-            Node newRoot, orphan, parentOfNewRoot;
+            BinaryNode<T> newRoot, orphan, parentOfNewRoot;
 
             newRoot            = this   .leftChild;
             orphan             = newRoot.rightChild;
