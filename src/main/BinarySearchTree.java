@@ -16,22 +16,6 @@ public class BinarySearchTree<T extends Comparable<T>>
         this.root = null;
     } // end of constructor
 
-//    /**
-//     * Constructs a Binary search tree and inserts the
-//     * passed key into the tree
-//     * @param key key to insert into the tree
-//     */
-//    @SafeVarargs
-//    public BinarySearchTree(T... key)
-//    {
-//        this();
-//
-//        for (T datum : key)
-//        {
-//            insert(datum);
-//        }
-//    } // end of Varargs constructor
-
     /**
      * Finds the height of the binary search tree
      * @return returns the height of the tree
@@ -91,11 +75,15 @@ public class BinarySearchTree<T extends Comparable<T>>
      */
     private BinaryNode<T> insert(BinaryNode<T> node, T key, BinaryNode<T> parent) throws IllegalArgumentException
     {
-        int compared;
+        BinaryNode<T> newNode;
+        int           compared;
 
         if (node == null)
         {
-            return new BinaryNode<>(key, parent);
+            newNode        = new BinaryNode<>(key);
+            newNode.parent = parent;
+
+            return newNode;
         }
 
         compared = key.compareTo(node.key);
@@ -499,9 +487,9 @@ public class BinarySearchTree<T extends Comparable<T>>
         BinaryNode<T> leftChild;
         BinaryNode<T> rightChild;
         BinaryNode<T> parent;
-        T key;
-        int  balanceFactor;
-        int  height;
+        T             key;
+        int           balanceFactor;
+        int           height;
 
         /**
          * Constructor for Binary Search Tree BinaryNode<T>
@@ -516,18 +504,6 @@ public class BinarySearchTree<T extends Comparable<T>>
             this.balanceFactor  = 0;
             this.height         = 1;
         } // end of default constructor
-
-        /**
-         * Constructor for Binary Search Tree Node that also
-         * specifies the node's parent
-         * @param key the key to be stored in the Node
-         * @param parent the parent Node of the Node being created
-         */
-        BinaryNode(T key, BinaryNode<T> parent)
-        {
-            this(key);
-            this.parent = parent;
-        } // end of constructor
 
         /**
          * Updates the Node's balance factor and height
