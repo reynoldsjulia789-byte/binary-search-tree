@@ -16,21 +16,21 @@ public class BinarySearchTree<T extends Comparable<T>>
         this.root = null;
     } // end of constructor
 
-    /**
-     * Constructs a Binary search tree and inserts the
-     * passed key into the tree
-     * @param key key to insert into the tree
-     */
-    @SafeVarargs
-    public BinarySearchTree(T... key)
-    {
-        this();
-
-        for (T datum : key)
-        {
-            insert(datum);
-        }
-    } // end of Varargs constructor
+//    /**
+//     * Constructs a Binary search tree and inserts the
+//     * passed key into the tree
+//     * @param key key to insert into the tree
+//     */
+//    @SafeVarargs
+//    public BinarySearchTree(T... key)
+//    {
+//        this();
+//
+//        for (T datum : key)
+//        {
+//            insert(datum);
+//        }
+//    } // end of Varargs constructor
 
     /**
      * Finds the height of the binary search tree
